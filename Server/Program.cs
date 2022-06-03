@@ -1,17 +1,51 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Server.Data;
+
 var builder = WebApplication.CreateBuilder(args);
+
+var services = builder.Services;
+
+var config = builder.Configuration;
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddSwaggerDocument();
+services.AddEndpointsApiExplorer();
+services.AddSwaggerGen();
+services.AddSwaggerDocument();
 
 
 
-builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();
+services.AddControllersWithViews();
+services.AddRazorPages();
+
+services.AddDbContext<ApplicationDbContext>(x => x.UseSqlServer(config.GetConnectionString("DefaultConnection")));
+
+services.AddDefaultIdentity<IdentityUser>()
+.AddEntityFrameworkStores<ApplicationDbContext>();
+
+services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+.AddJwtBearer(x =>
+{
+    x.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = config["JwtIssuer"],
+        ValidAudience = config["JwtAudience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtSecurityKey"])),
+
+    };
+});
+
+
 
 var app = builder.Build();
 
@@ -19,6 +53,8 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
+
+    app.UseDeveloperExceptionPage();
 
 }
 
@@ -36,6 +72,7 @@ app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
