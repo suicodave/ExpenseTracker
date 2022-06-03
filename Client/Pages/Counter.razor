@@ -1,4 +1,5 @@
 ﻿@page "/counter"
+@using System.Security.Claims
 @attribute [Authorize]
 
 <PageTitle>Counter</PageTitle>
@@ -8,6 +9,13 @@
 <AuthorizeView>
     <Authorized>
         <p>Hello @context?.User?.Identity?.Name</p>
+
+        @foreach (var role in @context?.User?.Claims?.Where(x => x.Type == ClaimTypes.Role))
+        {
+            <p>
+                @role
+            </p>
+        }
     </Authorized>
 </AuthorizeView>
 

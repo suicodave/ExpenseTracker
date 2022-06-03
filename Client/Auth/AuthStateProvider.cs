@@ -9,7 +9,9 @@ namespace Client.Auth
         public override Task<AuthenticationState> GetAuthenticationStateAsync()
         {
             var claims = new List<Claim>{
-                new Claim(ClaimTypes.Name,"Dave")
+                new Claim(ClaimTypes.Name,"Dave"),
+                new Claim(ClaimTypes.Role,"Author"),
+                new Claim(ClaimTypes.Role,"Director"),
             };
 
             var identity = new ClaimsIdentity(claims,"jwt");
