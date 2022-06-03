@@ -7,6 +7,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerDocument();
 
+
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
