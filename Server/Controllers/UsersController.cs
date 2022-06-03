@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
+using Server.Users;
+
 using Shared.Users;
 
 namespace Server.Controllers
@@ -9,10 +11,10 @@ namespace Server.Controllers
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<User> _userManager;
 
         public UsersController(
-            UserManager<IdentityUser> userManager
+            UserManager<User> userManager
         )
         {
             _userManager = userManager;
@@ -20,7 +22,7 @@ namespace Server.Controllers
 
         public async Task<ActionResult> Create(CreateUserRequest request)
         {
-            var user = new IdentityUser
+            var user = new User
             {
                 UserName = request.Email,
                 Email = request.Email

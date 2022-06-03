@@ -1,9 +1,12 @@
 using System.Text;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+
 using Server.Data;
+using Server.Users;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +29,7 @@ services.AddRazorPages();
 
 services.AddDbContext<ApplicationDbContext>(x => x.UseSqlServer(config.GetConnectionString("DefaultConnection")));
 
-services.AddDefaultIdentity<IdentityUser>()
+services.AddDefaultIdentity<User>()
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
 services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
