@@ -1,8 +1,18 @@
 ﻿@page "/counter"
+@attribute [Authorize]
 
 <PageTitle>Counter</PageTitle>
 
 <h1>Counter</h1>
+
+<AuthorizeView>
+    <Authorized>
+        <p>Hello @context?.User?.Identity?.Name</p>
+    </Authorized>
+</AuthorizeView>
+
+
+
 
 <p role="status">Current count: @currentCount</p>
 
