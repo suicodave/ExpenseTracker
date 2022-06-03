@@ -1,0 +1,45 @@
+@page "/Auth"
+@using Shared.Auth
+@inject HttpClient Http
+
+
+<p>Hello</p>
+
+adasd
+
+<EditForm Model="@request"
+    OnSubmit="HandleSubmit">
+
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <label for="email">Email</label>
+    <input type="email"
+        name="email"
+        id="email"
+        @bind-value="request.Email">
+
+
+    <label for="password">Password</label>
+    <input type="password"
+        name="password"
+        id="password"
+        @bind-value="request.Password">
+
+    <button type="submit">Sign In</button>
+
+</EditForm>
+
+
+@code {
+    SignInRequest request = new();
+
+    async Task HandleSubmit()
+    {
+        var result = await Http.PostAsJsonAsync("Auth", request);
+
+        string token = await result.Content.ReadAsStringAsync();
+
+        Console.WriteLine(token);
+    }
+}
