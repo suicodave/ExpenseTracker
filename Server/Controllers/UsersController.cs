@@ -1,3 +1,6 @@
+using System.Security.Claims;
+
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -42,6 +45,17 @@ namespace Server.Controllers
             }
 
             return Created("", new CreateUserResponse { IsSuccessful = createdUser.Succeeded });
+        }
+
+        [Authorize]
+        [HttpGet("CurrentUser")]
+        public ActionResult CurrentUser()
+        {
+            return Ok(new
+            {
+                Name = HttpContext.User.Identity?.Name,
+                Claims = HttpContext.User.Claims.Select(x => new Claim(x.Type, x.Value))
+            });
         }
     }
 }
