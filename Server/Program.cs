@@ -1,10 +1,10 @@
 using System.Text;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-
+using NSwag;
+using NSwag.Generation.Processors.Security;
 using Server.Data;
 using Server.Users;
 
@@ -18,13 +18,26 @@ var config = builder.Configuration;
 
 services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-services.AddEndpointsApiExplorer();
-services.AddSwaggerGen();
-services.AddSwaggerDocument();
+
+
+services.AddOpenApiDocument(configure =>
+            {
+                configure.Title = "Expense Tracker API";
+                configure.AddSecurity("JWT", Enumerable.Empty<string>(), new OpenApiSecurityScheme
+                {
+                    Type = OpenApiSecuritySchemeType.ApiKey,
+                    Name = "Authorization",
+                    In = OpenApiSecurityApiKeyLocation.Header,
+                    Description = "Type into the textbox: Bearer {your JWT token}."
+                });
+
+                configure.OperationProcessors.Add(new AspNetCoreOperationSecurityScopeProcessor("JWT"));
+            });
 
 
 
 services.AddControllersWithViews();
+
 services.AddRazorPages();
 
 services.AddDbContext<ApplicationDbContext>(x => x.UseSqlServer(config.GetConnectionString("DefaultConnection")));
