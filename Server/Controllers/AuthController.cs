@@ -19,18 +19,27 @@ namespace Server.Controllers
     {
         private readonly SignInManager<User> _signInManager;
         private readonly IConfiguration _configuration;
+        private readonly UserManager<User> _userManager;
 
-        public AuthController(SignInManager<User> signInManager, IConfiguration configuration)
+        public AuthController(SignInManager<User> signInManager, IConfiguration configuration, UserManager<User> userManager)
         {
             _signInManager = signInManager;
             _configuration = configuration;
+            _userManager = userManager;
         }
 
 
         [HttpPost]
         public async Task<ActionResult> SignIn([FromBody] SignInRequest request)
         {
-            var result = await this._signInManager.PasswordSignInAsync(request.Email, request.Password, false, false);
+            var user = await _userManager.FindByEmailAsync(request.Email);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var result = await this._signInManager.CheckPasswordSignInAsync(user, request.Password, false);
 
             if (!result.Succeeded)
             {
