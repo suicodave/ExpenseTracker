@@ -3,8 +3,10 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+
 using NSwag;
 using NSwag.Generation.Processors.Security;
+
 using Server.Data;
 using Server.Users;
 
@@ -43,6 +45,7 @@ services.AddRazorPages();
 services.AddDbContext<ApplicationDbContext>(x => x.UseSqlServer(config.GetConnectionString("DefaultConnection")));
 
 services.AddDefaultIdentity<User>()
+.AddRoles<Role>()
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
 services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
