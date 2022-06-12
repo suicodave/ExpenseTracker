@@ -23,7 +23,7 @@ namespace Server.Controllers
             _userManager = userManager;
         }
 
-        public async Task<ActionResult> Create(CreateUserRequest request)
+        public async Task<ActionResult> Register(RegisterUserRequest request)
         {
             var user = new User
             {
@@ -32,6 +32,8 @@ namespace Server.Controllers
             };
 
             var createdUser = await _userManager.CreateAsync(user, request.Password);
+
+            await _userManager.AddToRoleAsync(user, Role.OWNER);
 
             if (!createdUser.Succeeded)
             {

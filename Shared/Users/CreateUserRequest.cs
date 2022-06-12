@@ -1,6 +1,6 @@
 namespace Shared.Users
 {
-    public class CreateUserRequest
+    public class RegisterUserRequest
     {
         public string Email { get; set; } = string.Empty;
 
