@@ -26,6 +26,20 @@ namespace Server.Controllers
             _userManager = userManager;
         }
 
+        [HttpGet("{email}")]
+
+        public async Task<ActionResult<IEnumerable<string>>> GetUserRoles(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(await _userManager.GetRolesAsync(user));
+        }
+
         [HttpPost]
         public async Task<ActionResult<int>> SyncUserRole(SyncUserRoleRequest request)
         {
