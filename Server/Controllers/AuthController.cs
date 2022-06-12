@@ -41,6 +41,8 @@ namespace Server.Controllers
 
             var result = await this._signInManager.CheckPasswordSignInAsync(user, request.Password, false);
 
+            var userRoles = await _userManager.GetRolesAsync(user);
+
             if (!result.Succeeded)
             {
                 return NotFound();
@@ -49,6 +51,8 @@ namespace Server.Controllers
             // Claims Encoding
             List<Claim> claims = new();
             claims.Add(new Claim(ClaimTypes.Name, request.Email));
+
+            claims.AddRange(userRoles.Select(x => new Claim(ClaimTypes.Role, x)));
 
 
 
