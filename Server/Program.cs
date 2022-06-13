@@ -8,6 +8,7 @@ using NSwag;
 using NSwag.Generation.Processors.Security;
 
 using Server.Data;
+using Server.Data.Extensions;
 using Server.Users;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +21,9 @@ var config = builder.Configuration;
 
 services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+
+services.AddScoped<DatabaseInitializer>();
 
 
 services.AddOpenApiDocument(configure =>
@@ -76,6 +80,8 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 
 }
+
+await app.UseDatabaseInitializer();
 
 app.UseOpenApi();
 
