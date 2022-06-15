@@ -25,6 +25,8 @@ services.AddControllers();
 
 services.AddScoped<DatabaseInitializer>();
 
+services.AddScoped<CurrentUserService>();
+
 
 services.AddOpenApiDocument(configure =>
             {

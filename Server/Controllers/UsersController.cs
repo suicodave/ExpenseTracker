@@ -15,12 +15,15 @@ namespace Server.Controllers
     public class UsersController : ControllerBase
     {
         private readonly UserManager<User> _userManager;
+        private readonly CurrentUserService _currentUserService;
 
         public UsersController(
-            UserManager<User> userManager
+            UserManager<User> userManager,
+            CurrentUserService currentUserService
         )
         {
             _userManager = userManager;
+            _currentUserService = currentUserService;
         }
 
         public async Task<ActionResult> Register(RegisterUserRequest request)
@@ -55,8 +58,9 @@ namespace Server.Controllers
         {
             return Ok(new
             {
-                Name = HttpContext.User.Identity?.Name,
-                Claims = HttpContext.User.Claims.Select(x => new Claim(x.Type, x.Value))
+                Name = _currentUserService.Email,
+                Id = _currentUserService.UserId,
+                Claims = _currentUserService.Claims
             });
         }
     }
