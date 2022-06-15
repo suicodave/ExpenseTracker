@@ -51,7 +51,7 @@ namespace Server.Controllers
             // Claims Encoding
             List<Claim> claims = new();
             claims.Add(new Claim(ClaimTypes.Name, request.Email));
-
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
             claims.AddRange(userRoles.Select(x => new Claim(ClaimTypes.Role, x)));
 
 
