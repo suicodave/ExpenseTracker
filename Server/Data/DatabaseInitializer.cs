@@ -50,11 +50,16 @@ namespace Server.Data
 
             string password = _configuration.GetValue<string>("DefaultAdministrator:Password");
 
-            await _userManager.CreateAsync(new User
+            if (email is not null)
             {
-                Email = email,
-                UserName = email
-            }, password);
+                await _userManager.CreateAsync(new User
+                {
+                    Email = email,
+                    UserName = email
+                }, password);
+            }
+
+
         }
 
 
