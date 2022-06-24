@@ -6,11 +6,13 @@ using Server.Organizations;
 
 namespace Server.Data.Extensions.EntityConfigurations
 {
-    public class OrganizationEntityConfiguration : IEntityTypeConfiguration<Organization>
+    public class OrganizationEntityConfiguration : AuditableEntityConfiguration<Organization>
     {
 
-        public void Configure(EntityTypeBuilder<Organization> builder)
+        public override void Configure(EntityTypeBuilder<Organization> builder)
         {
+            base.Configure(builder);
+
             builder.HasAlternateKey(x => new { x.UserId, x.Name });
         }
     }

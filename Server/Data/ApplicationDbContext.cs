@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 
+using Server.AccountTypes;
 using Server.Common.Entities;
 using Server.Organizations;
 using Server.Users;
@@ -25,6 +26,8 @@ namespace Server.Data
 
         public DbSet<Organization> Organizations { get; set; }
 
+
+        public DbSet<AccountType> AccountTypes { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
