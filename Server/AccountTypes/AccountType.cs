@@ -11,6 +11,6 @@ namespace Server.AccountTypes
 
         public int OrganizationId { get; set; }
 
-        public Organization Organization { get; set; } = new();
+        public Organization Organization { get; set; }
     }
 }
