@@ -1,3 +1,6 @@
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,20 +18,24 @@ namespace Server.Controllers
     public class RolesController : ControllerBase
     {
         private readonly RoleManager<Role> _roleManager;
+        private readonly IMapper _mapper;
 
-        public RolesController(RoleManager<Role> roleManager)
+        public RolesController(RoleManager<Role> roleManager, IMapper mapper)
         {
             _roleManager = roleManager;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Role>>> GetRoles()
+        public async Task<ActionResult<IEnumerable<RoleResponse>>> GetRoles()
         {
-            return Ok(await _roleManager.Roles.ToListAsync());
+            return Ok(await _roleManager.Roles
+            .ProjectTo<RoleResponse>(_mapper.ConfigurationProvider)
+            .ToListAsync());
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create(CreateRole request)
+        public async Task<ActionResult> Create(RoleRequest request)
         {
 
             var result = await _roleManager.CreateAsync(new Role
