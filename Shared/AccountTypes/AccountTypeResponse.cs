@@ -1,6 +1,8 @@
+using Shared.Common;
+
 namespace Shared.AccountTypes
 {
-    public class AccountTypeCreateRequest
+    public class AccountTypeResponse : AuditableEntityResponse<int>
     {
         public string Name { get; set; } = string.Empty;
 

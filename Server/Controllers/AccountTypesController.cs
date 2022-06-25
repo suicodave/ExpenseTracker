@@ -1,3 +1,6 @@
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,35 +15,34 @@ namespace Server.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
-    public class AccountTypeController : ControllerBase
+    public class AccountTypesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public AccountTypeController(
-            ApplicationDbContext context
+        public AccountTypesController(
+            ApplicationDbContext context,
+            IMapper mapper
         )
         {
             _context = context;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AccountType>>> GetAccountTypes()
+        public async Task<ActionResult<IEnumerable<AccountTypeResponse>>> GetAccountTypes()
         {
             return Ok(await _context.AccountTypes
             .OrderByDescending(x => x.Id)
+            .ProjectTo<AccountTypeResponse>(_mapper.ConfigurationProvider)
             .ToListAsync());
         }
 
 
         [HttpPost]
-        public async Task<ActionResult<int>> CreateAccountType(AccountTypeCreateRequest request)
+        public async Task<ActionResult<int>> CreateAccountType(AccountTypeRequest request)
         {
-            AccountType accountType = new AccountType
-            {
-                Name = request.Name,
-                Description = request.Description,
-                OrganizationId = request.OrganizationId
-            };
+            AccountType accountType = _mapper.Map<AccountType>(request);
 
             _context.AccountTypes.Add(accountType);
 
