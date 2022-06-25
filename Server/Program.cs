@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -26,6 +27,8 @@ services.AddControllers();
 services.AddScoped<DatabaseInitializer>();
 
 services.AddScoped<CurrentUserService>();
+
+services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 
 services.AddOpenApiDocument(configure =>
