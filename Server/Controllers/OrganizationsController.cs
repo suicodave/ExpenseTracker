@@ -1,3 +1,6 @@
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,20 +18,19 @@ namespace Server.Controllers
     public class OrganizationsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public OrganizationsController(ApplicationDbContext context)
+        public OrganizationsController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         [HttpPost]
-        public async Task<ActionResult<int>> CreateOrganization([FromBody] CreateOrganizationRequest request)
+        public async Task<ActionResult<int>> CreateOrganization([FromBody] OrganizationRequest request)
         {
 
-            var organization = new Organization
-            {
-                Name = request.Name
-            };
+            Organization organization = _mapper.Map<Organization>(request);
 
             _context.Organizations.Add(organization);
 
@@ -44,9 +46,11 @@ namespace Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Organization>>> GetAll()
+        public async Task<ActionResult<IEnumerable<OrganizationResponse>>> GetAll()
         {
-            return Ok(await _context.Organizations.OrderByDescending(x => x.Id).ToListAsync());
+            return Ok(await _context.Organizations.OrderByDescending(x => x.Id)
+            .ProjectTo<OrganizationResponse>(_mapper.ConfigurationProvider)
+            .ToListAsync());
         }
     }
 }
