@@ -1,0 +1,37 @@
+<MudLayout>
+    <MudAppBar Color="Color.Primary"
+        Fixed="false"
+        Elevation="0">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu"
+            Color="Color.Inherit"
+            Edge="Edge.Start"
+            OnClick="ToggleDrawer" />
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Custom.Brands.GitHub"
+            Color="Color.Inherit" />
+    </MudAppBar>
+    <MudDrawer Open="@_isDrawerOpen"
+        ClipMode="DrawerClipMode.Docked"
+        DisableOverlay="true">
+
+    </MudDrawer>
+    <MudMainContent>
+        <div class="ma-4">
+            @ChildContent
+        </div>
+    </MudMainContent>
+</MudLayout>
+
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+
+    private bool _isDrawerOpen { get; set; } = false;
+
+    void ToggleDrawer()
+    {
+        _isDrawerOpen = !_isDrawerOpen;
+    }
+}
