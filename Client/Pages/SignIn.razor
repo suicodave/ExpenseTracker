@@ -1,38 +1,51 @@
 @page "/Auth"
+@using Blazored.LocalStorage
 @using Shared.Auth
 @inject HttpClient Http
 
+@attribute [AllowAnonymous]
 
-<p>Hello</p>
+<MudPaper Class="pa-16 ma-2"
+    Elevation="3">
+    <EditForm Model="@request"
+        OnSubmit="HandleSubmit">
 
-adasd
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-<EditForm Model="@request"
-    OnSubmit="HandleSubmit">
-
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-
-    <label for="email">Email</label>
-    <input type="email"
-        name="email"
-        id="email"
-        @bind-value="request.Email">
+        <MudTextField @bind-Value="@request.Email"
+            Label="Email"
+            Variant="Variant.Outlined"
+            Adornment="Adornment.Start"
+            InputType="@InputType.Email" />
 
 
-    <label for="password">Password</label>
-    <input type="password"
-        name="password"
-        id="password"
-        @bind-value="request.Password">
+        <MudTextField @bind-Value="@request.Password"
+            Label="Password"
+            InputType="@InputType.Password"
+            Variant="Variant.Outlined"></MudTextField>
 
-    <button type="submit">Sign In</button>
+        <MudButton Variant="Variant.Filled"
+            ButtonType="ButtonType.Submit"
+            Color="Color.Primary">Sign In</MudButton>
 
-</EditForm>
+    </EditForm>
+</MudPaper>
+
+
 
 
 @code {
     SignInRequest request = new();
+
+    [Inject]
+    private ILocalStorageService _localStorageService { get; set; }
+
+    [Inject]
+    private NavigationManager _navigationManager { get; set; }
+
+    [Inject]
+    AuthenticationStateProvider _stateProvider { get; set; }
 
     async Task HandleSubmit()
     {
@@ -40,6 +53,11 @@ adasd
 
         string token = await result.Content.ReadAsStringAsync();
 
-        Console.WriteLine(token);
+        await _localStorageService.SetItemAsStringAsync("jwt", token);
+
+        await _stateProvider.GetAuthenticationStateAsync();
+
+
+        _navigationManager.NavigateTo("/");
     }
 }
