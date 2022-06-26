@@ -2,6 +2,7 @@
 @using Blazored.LocalStorage
 @using Shared.Auth
 @using Blazored.FluentValidation
+@using System.Net
 @inject HttpClient Http
 
 @attribute [AllowAnonymous]
@@ -67,13 +68,20 @@
     {
         var result = await Http.PostAsJsonAsync("Auth", request);
 
-        string token = await result.Content.ReadAsStringAsync();
-        @*
+        if (result.StatusCode == HttpStatusCode.OK)
+        {
+            string token = await result.Content.ReadAsStringAsync();
+
             await _localStorageService.SetItemAsStringAsync("jwt", token);
 
             await _stateProvider.GetAuthenticationStateAsync();
 
 
-            _navigationManager.NavigateTo("/"); *@
+            _navigationManager.NavigateTo("/");
+
+            return;
+        }
+
+
     }
 }
