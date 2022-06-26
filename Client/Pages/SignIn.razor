@@ -1,36 +1,51 @@
 @page "/Auth"
 @using Blazored.LocalStorage
 @using Shared.Auth
+@using Blazored.FluentValidation
 @inject HttpClient Http
 
 @attribute [AllowAnonymous]
 
-<MudPaper Class="pa-16 ma-2"
-    Elevation="3">
-    <EditForm Model="@request"
-        OnSubmit="HandleSubmit">
+<MudContainer MaxWidth="MaxWidth.Small"
+    Class="mt-16">
+    <MudPaper Elevation="2"
+        Class="pa-16 ma-2">
 
-        <DataAnnotationsValidator />
-        <ValidationSummary />
+        <MudText Typo="@Typo.h4"
+            Class="mb-4">Xpense</MudText>
 
-        <MudTextField @bind-Value="@request.Email"
-            Label="Email"
-            Variant="Variant.Outlined"
-            Adornment="Adornment.Start"
-            InputType="@InputType.Email" />
+        <EditForm Model="@request"
+            OnValidSubmit="HandleSubmit">
+
+            <FluentValidationValidator />
+
+            <MudTextField @bind-Value="@request.Email"
+                Label="Email"
+                Variant="Variant.Outlined"
+                Adornment="Adornment.Start"
+                InputType="@InputType.Email"
+                For="@(()=>request.Email)" />
 
 
-        <MudTextField @bind-Value="@request.Password"
-            Label="Password"
-            InputType="@InputType.Password"
-            Variant="Variant.Outlined"></MudTextField>
+            <MudTextField @bind-Value="@request.Password"
+                Label="Password"
+                InputType="@InputType.Password"
+                Variant="Variant.Outlined"
+                For="@(()=>request.Password)" />
 
-        <MudButton Variant="Variant.Filled"
-            ButtonType="ButtonType.Submit"
-            Color="Color.Primary">Sign In</MudButton>
+            <div class="d-flex justify-end">
+                <MudButton Variant="Variant.Filled"
+                    ButtonType="ButtonType.Submit"
+                    Color="Color.Primary"
+                    Class="mt-4">Sign In</MudButton>
+            </div>
 
-    </EditForm>
-</MudPaper>
+
+        </EditForm>
+    </MudPaper>
+</MudContainer>
+
+
 
 
 
@@ -47,17 +62,18 @@
     [Inject]
     AuthenticationStateProvider _stateProvider { get; set; }
 
+
     async Task HandleSubmit()
     {
         var result = await Http.PostAsJsonAsync("Auth", request);
 
         string token = await result.Content.ReadAsStringAsync();
+        @*
+            await _localStorageService.SetItemAsStringAsync("jwt", token);
 
-        await _localStorageService.SetItemAsStringAsync("jwt", token);
-
-        await _stateProvider.GetAuthenticationStateAsync();
+            await _stateProvider.GetAuthenticationStateAsync();
 
 
-        _navigationManager.NavigateTo("/");
+            _navigationManager.NavigateTo("/"); *@
     }
 }
