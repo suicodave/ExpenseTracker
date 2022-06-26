@@ -1,0 +1,14 @@
+@inject NavigationManager navigation
+
+
+@code {
+
+    [Parameter, EditorRequired]
+    public string Path { get; set; }
+
+
+    protected override void OnInitialized()
+    {
+        navigation.NavigateTo(Path);
+    }
+}

@@ -4,8 +4,10 @@
             <AuthorizeRouteView RouteData="@routeData"
                 DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
-                    <SignInRedirect />
+                    <Redirect Path="Auth" />
                 </NotAuthorized>
+
+                
             </AuthorizeRouteView>
             <FocusOnNavigate RouteData="@routeData"
                 Selector="h1" />
