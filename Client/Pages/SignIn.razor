@@ -3,70 +3,82 @@
 @using Shared.Auth
 @using Blazored.FluentValidation
 @using System.Net
-@inject HttpClient Http
+@inject HttpClient _http
+@inject AuthenticationStateProvider _stateProvider
+@inject NavigationManager _navigationManager
 
 @attribute [AllowAnonymous]
 
-<MudContainer MaxWidth="MaxWidth.Small"
-    Class="mt-16">
-    <MudPaper Elevation="2"
-        Class="pa-16 ma-2">
 
-        <MudText Typo="@Typo.h4"
-            Class="mb-4">Xpense</MudText>
+<AuthorizeView>
+    <Authorized>
+        <Redirect Path="/"></Redirect>
+    </Authorized>
+    <NotAuthorized>
+        <MudContainer MaxWidth="MaxWidth.Small"
+            Class="mt-16">
+            <MudPaper Elevation="2"
+                Class="pa-16 ma-2">
 
-        <EditForm Model="@request"
-            OnValidSubmit="HandleSubmit">
+                <MudText Typo="@Typo.h4"
+                    Class="mb-4">Xpense</MudText>
 
-            <FluentValidationValidator />
+                <EditForm Model="@_request"
+                    OnValidSubmit="HandleSubmit"
+                    Context="editContext">
 
-            <MudTextField @bind-Value="@request.Email"
-                Label="Email"
-                Variant="Variant.Outlined"
-                Adornment="Adornment.Start"
-                InputType="@InputType.Email"
-                For="@(()=>request.Email)" />
+                    <FluentValidationValidator />
 
-
-            <MudTextField @bind-Value="@request.Password"
-                Label="Password"
-                InputType="@InputType.Password"
-                Variant="Variant.Outlined"
-                For="@(()=>request.Password)" />
-
-            <div class="d-flex justify-end">
-                <MudButton Variant="Variant.Filled"
-                    ButtonType="ButtonType.Submit"
-                    Color="Color.Primary"
-                    Class="mt-4">Sign In</MudButton>
-            </div>
+                    <MudTextField @bind-Value="@_request.Email"
+                        Label="Email"
+                        Variant="Variant.Outlined"
+                        Adornment="Adornment.Start"
+                        InputType="@InputType.Email"
+                        For="@(()=>_request.Email)" />
 
 
-        </EditForm>
-    </MudPaper>
-</MudContainer>
+                    <MudTextField @bind-Value="@_request.Password"
+                        Label="Password"
+                        InputType="@InputType.Password"
+                        Variant="Variant.Outlined"
+                        For="@(()=>_request.Password)" />
 
+                    <div class="d-flex justify-end">
+                        <MudButton Variant="Variant.Filled"
+                            ButtonType="ButtonType.Submit"
+                            Color="Color.Primary"
+                            Class="mt-4"
+                            Disabled="@isLoading">Sign In</MudButton>
+                    </div>
+
+
+                </EditForm>
+            </MudPaper>
+        </MudContainer>
+    </NotAuthorized>
+</AuthorizeView>
 
 
 
 
 
 @code {
-    SignInRequest request = new();
+    private SignInRequest _request = new();
 
     [Inject]
     private ILocalStorageService _localStorageService { get; set; }
 
-    [Inject]
-    private NavigationManager _navigationManager { get; set; }
 
-    [Inject]
-    AuthenticationStateProvider _stateProvider { get; set; }
+    private bool isLoading { get; set; }
 
 
     async Task HandleSubmit()
     {
-        var result = await Http.PostAsJsonAsync("Auth", request);
+        this.isLoading = true;
+
+        var result = await _http.PostAsJsonAsync("Auth", _request);
+
+        this.isLoading = false;
 
         if (result.StatusCode == HttpStatusCode.OK)
         {
@@ -75,7 +87,6 @@
             await _localStorageService.SetItemAsStringAsync("jwt", token);
 
             await _stateProvider.GetAuthenticationStateAsync();
-
 
             _navigationManager.NavigateTo("/");
 
