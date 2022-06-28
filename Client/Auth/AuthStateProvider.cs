@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 
 using Blazored.LocalStorage;
@@ -11,10 +12,12 @@ namespace Client.Auth
     public class AuthStateProvider : AuthenticationStateProvider
     {
         private readonly ILocalStorageService _localStorage;
+        private readonly HttpClient _http;
 
-        public AuthStateProvider(ILocalStorageService localStorage)
+        public AuthStateProvider(ILocalStorageService localStorage, HttpClient http)
         {
             _localStorage = localStorage;
+            _http = http;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -34,6 +37,8 @@ namespace Client.Auth
             ClaimsPrincipal principal = new ClaimsPrincipal(identity);
 
             var state = new AuthenticationState(principal);
+
+            _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
 
             NotifyAuthenticationStateChanged(Task.FromResult(state));
 
