@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 using Server.Data;
 using Server.Organizations;
+using Server.Users;
 
 using Shared.Organizations;
 
@@ -19,11 +20,13 @@ namespace Server.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly CurrentUserService _userService;
 
-        public OrganizationsController(ApplicationDbContext context, IMapper mapper)
+        public OrganizationsController(ApplicationDbContext context, IMapper mapper, CurrentUserService userService)
         {
             _context = context;
             _mapper = mapper;
+            _userService = userService;
         }
 
         [HttpPost]
@@ -51,6 +54,17 @@ namespace Server.Controllers
             return Ok(await _context.Organizations.OrderByDescending(x => x.Id)
             .ProjectTo<OrganizationResponse>(_mapper.ConfigurationProvider)
             .ToListAsync());
+        }
+
+
+        [HttpGet("Owned")]
+        public async Task<ActionResult<IEnumerable<OrganizationResponse>>> GetUserOrganizations()
+        {
+            return Ok(
+                await _context.Organizations.Where(x => x.UserId == _userService.UserId)
+                .ProjectTo<OrganizationResponse>(_mapper.ConfigurationProvider)
+                .ToListAsync()
+            );
         }
     }
 }

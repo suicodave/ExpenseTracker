@@ -1,5 +1,10 @@
 @page "/Organizations"
+@attribute [Authorize]
 
 <AuthorizedLayout>
-    Organizations page works!
+    <MudContainer MaxWidth="MaxWidth.Small">
+        
+
+        <OwnedOrganizationsList></OwnedOrganizationsList>
+    </MudContainer>
 </AuthorizedLayout>

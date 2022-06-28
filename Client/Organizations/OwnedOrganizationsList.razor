@@ -1,0 +1,36 @@
+@using Shared.Organizations
+@inject HttpClient _http
+
+
+<MudText Color="Color.Primary"
+    Class="my-4"
+    Typo="Typo.h5">
+    My Organizations
+</MudText>
+
+
+
+@foreach (var organization in _organizations)
+{
+    <MudPaper Class="my-2 pa-6 d-flex">
+        <MudText>
+            @organization.Name
+        </MudText>
+
+        <MudSpacer />
+
+        <MudIcon Icon="@Icons.Filled.CheckCircle"
+        Color="Color.Success" />
+    </MudPaper>
+}
+
+
+@code {
+
+    private OrganizationResponse[] _organizations { get; set; } = new OrganizationResponse[] { };
+
+    protected override async Task OnInitializedAsync()
+    {
+        _organizations = await _http.GetFromJsonAsync<OrganizationResponse[]>("Organizations/Owned")!;
+    }
+}
