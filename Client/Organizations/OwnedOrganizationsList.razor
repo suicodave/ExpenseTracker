@@ -1,6 +1,6 @@
 @using Shared.Organizations
 @inject HttpClient _http
-
+@inject HttpInterceptorService _interceptor
 
 <MudText Color="Color.Primary"
     Class="my-4"
@@ -31,6 +31,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        _interceptor.RegisterEvent();
+
         _organizations = await _http.GetFromJsonAsync<OrganizationResponse[]>("Organizations/Owned")!;
     }
 }

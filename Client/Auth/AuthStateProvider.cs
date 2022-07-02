@@ -22,12 +22,17 @@ namespace Client.Auth
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
+            AuthenticationState state;
 
             string jwt = await _localStorage.GetItemAsStringAsync("jwt");
 
             if (jwt is null)
             {
-                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+                state = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+
+                NotifyAuthenticationStateChanged(Task.FromResult(state));
+
+                return state;
             }
 
             IEnumerable<Claim> claims = new JwtSecurityToken(jwt).Claims;
@@ -36,7 +41,7 @@ namespace Client.Auth
 
             ClaimsPrincipal principal = new ClaimsPrincipal(identity);
 
-            var state = new AuthenticationState(principal);
+            state = new AuthenticationState(principal);
 
             _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
 
