@@ -2,11 +2,17 @@
 @inject HttpClient _http
 @inject HttpInterceptorService _interceptor
 
-<MudText Color="Color.Primary"
-    Class="my-4"
-    Typo="Typo.h5">
-    My Organizations
-</MudText>
+<div class="d-flex align-center">
+    <MudText Color="Color.Primary"
+        Class="my-4"
+        Typo="Typo.h5">
+        My Organizations
+    </MudText>
+
+    <MudSpacer></MudSpacer>
+
+    <CreateOrganizationButton OnCreated="GetData"></CreateOrganizationButton>
+</div>
 
 
 
@@ -33,6 +39,11 @@
     {
         _interceptor.RegisterEvent();
 
+        await GetData();
+    }
+
+    private async Task GetData()
+    {
         _organizations = await _http.GetFromJsonAsync<OrganizationResponse[]>("Organizations/Owned")!;
     }
 }

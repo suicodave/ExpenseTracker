@@ -2,7 +2,7 @@
 @inject ILogger<MainLayout> _logger
 
 <ErrorBoundary @ref="errorBoundary">
-    <ChildContent >
+    <ChildContent>
         @Body
     </ChildContent>
     <ErrorContent Context="errorContext">
@@ -14,10 +14,14 @@
 
 
 <MudThemeProvider />
-<MudDialogProvider />
+<MudDialogProvider FullWidth="true"
+    MaxWidth="MaxWidth.ExtraSmall"
+    DisableBackdropClick="false"
+    Position="DialogPosition.Center"
+    CloseOnEscapeKey="true" />
 <MudSnackbarProvider />
 
-@code{
+@code {
     private ErrorBoundary? errorBoundary;
 
     protected override void OnParametersSet()
@@ -25,4 +29,4 @@
         errorBoundary?.Recover();
     }
 
-}   
+}

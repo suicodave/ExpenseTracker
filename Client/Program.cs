@@ -19,8 +19,8 @@ builder.Services.AddHttpClientInterceptor();
 builder.Services.AddMudServices(config =>
 {
     config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomCenter;
-
     config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
+
 });
 
 builder.Services.AddScoped(sp => new HttpClient

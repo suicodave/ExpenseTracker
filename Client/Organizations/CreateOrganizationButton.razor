@@ -1,0 +1,25 @@
+@inject IDialogService _dialogService
+
+<MudButton Class="rounded-lg"
+    Variant="Variant.Filled"
+    Color="Color.Primary"
+    OnClick="OpenForm">Create</MudButton>
+
+
+@code {
+
+    [Parameter]
+    public EventCallback OnCreated { get; set; }
+
+    private async Task OpenForm()
+    {
+        IDialogReference dialogRef = _dialogService.Show<CreateOrganizationForm>("Create Organization");
+
+        DialogResult result = await dialogRef.Result;
+
+        if (!result.Cancelled)
+        {
+            await OnCreated.InvokeAsync();
+        }
+    }
+}
