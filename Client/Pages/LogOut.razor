@@ -1,0 +1,18 @@
+@inject NavigationManager _navigationManager
+@inject AuthenticationStateProvider _authStateProvider
+@inject ILocalStorageService _localStorage;
+
+@attribute [Authorize]
+@page "/LogOut"
+
+
+@code{
+    protected override async Task OnInitializedAsync()
+    {
+        await _localStorage.RemoveItemAsync("jwt");
+
+        await _authStateProvider.GetAuthenticationStateAsync();
+
+        _navigationManager.NavigateTo("Auth");
+    }
+}

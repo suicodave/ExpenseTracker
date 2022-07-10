@@ -15,13 +15,15 @@ namespace Client.Common
         private readonly NavigationManager _navigationManager;
         private readonly ILocalStorageService _localStorage;
         private readonly AuthenticationStateProvider _stateProvider;
+        private readonly ILogger<HttpInterceptorService> _logger;
 
-        public HttpInterceptorService(HttpClientInterceptor httpClientInterceptor, NavigationManager navigationManager, ILocalStorageService localStorage, AuthenticationStateProvider stateProvider)
+        public HttpInterceptorService(HttpClientInterceptor httpClientInterceptor, NavigationManager navigationManager, ILocalStorageService localStorage, AuthenticationStateProvider stateProvider, ILogger<HttpInterceptorService> logger)
         {
             _httpClientInterceptor = httpClientInterceptor;
             _navigationManager = navigationManager;
             _localStorage = localStorage;
             _stateProvider = stateProvider;
+            _logger = logger;
         }
 
         public void RegisterEvent() => _httpClientInterceptor.AfterSend += new EventHandler<HttpClientInterceptorEventArgs>(
@@ -32,16 +34,16 @@ namespace Client.Common
         {
             HttpStatusCode statusCode = e.Response.StatusCode;
 
-            Console.WriteLine($"Intercepted with {statusCode}");
+            _logger.LogInformation("Received request with status: {statusCode}", statusCode);
 
             switch (statusCode)
             {
                 case HttpStatusCode.Unauthorized:
-                    Console.WriteLine("Removing JWT");
-                    await _localStorage.RemoveItemAsync("jwt");
-                    Console.WriteLine("Refreshing sate");
-                    await _stateProvider.GetAuthenticationStateAsync();
-                    _navigationManager.NavigateTo("/Auth");
+                    _logger.LogInformation("Logging out.");
+
+                    
+                    _navigationManager.NavigateTo("LogOut");
+                    
                     break;
                 default:
                     break;

@@ -1,4 +1,5 @@
-@inject NavigationManager navigation
+@inject NavigationManager _navigation
+@inject ILogger<Redirect> _logger
 
 
 @code {
@@ -9,6 +10,8 @@
 
     protected override void OnInitialized()
     {
-        navigation.NavigateTo(Path);
+        _logger.LogInformation($"Navigating to {Path}");
+
+        _navigation.NavigateTo(Path);
     }
 }
