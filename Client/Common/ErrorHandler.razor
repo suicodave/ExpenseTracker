@@ -1,0 +1,23 @@
+@inject ISnackbar Snackbar
+@using System.Net.Http
+
+
+@ChildContent
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public Exception? Error { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (Error is HttpRequestException)
+        {
+            HttpRequestException error = (HttpRequestException)Error;
+
+            Snackbar.Add($"Request failed! {(int)error.StatusCode!}",Severity.Error);
+        }
+    }
+}

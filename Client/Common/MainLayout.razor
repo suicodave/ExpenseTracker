@@ -1,8 +1,28 @@
 ﻿@inherits LayoutComponentBase
+@inject ILogger<MainLayout> _logger
 
+<ErrorBoundary @ref="errorBoundary">
+    <ChildContent >
+        @Body
+    </ChildContent>
+    <ErrorContent Context="errorContext">
+        <ErrorHandler Error="@errorContext">
+            @Body
+        </ErrorHandler>
+    </ErrorContent>
+</ErrorBoundary>
 
-@Body
 
 <MudThemeProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
+
+@code{
+    private ErrorBoundary? errorBoundary;
+
+    protected override void OnParametersSet()
+    {
+        errorBoundary?.Recover();
+    }
+
+}   
