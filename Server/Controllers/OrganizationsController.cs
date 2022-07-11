@@ -21,19 +21,29 @@ namespace Server.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly CurrentUserService _userService;
+        private readonly ILogger<OrganizationsController> _logger;
 
-        public OrganizationsController(ApplicationDbContext context, IMapper mapper, CurrentUserService userService)
+        public OrganizationsController(ApplicationDbContext context, IMapper mapper, CurrentUserService userService, ILogger<OrganizationsController> logger)
         {
             _context = context;
             _mapper = mapper;
             _userService = userService;
+            _logger = logger;
         }
 
         [HttpPost]
         public async Task<ActionResult<int>> CreateOrganization([FromBody] OrganizationRequest request)
         {
-
             Organization organization = _mapper.Map<Organization>(request);
+
+            bool hasDefaultOrganization = await _context.Organizations.AnyAsync(
+                x => x.UserId == _userService.UserId && x.IsDefault
+            );
+
+            if (!hasDefaultOrganization)
+            {
+                organization.IsDefault = true;
+            }
 
             _context.Organizations.Add(organization);
 
@@ -45,7 +55,6 @@ namespace Server.Controllers
             }
 
             return BadRequest();
-
         }
 
         [HttpGet]
@@ -65,6 +74,34 @@ namespace Server.Controllers
                 .ProjectTo<OrganizationResponse>(_mapper.ConfigurationProvider)
                 .ToListAsync()
             );
+        }
+
+        [HttpPut("{organizationId}/SetCurrent")]
+        public async Task<ActionResult<int>> SetCurrentOrganization(int organizationId)
+        {
+            Organization? selectedOrganization = await _context.Organizations.Where(x => x.UserId == _userService.UserId && x.Id == organizationId)
+            .FirstOrDefaultAsync();
+
+            Organization? currentOrganization = await _context.Organizations.Where(x => x.UserId == _userService.UserId && x.IsDefault)
+            .FirstOrDefaultAsync();
+
+            if (selectedOrganization is null)
+            {
+                return NotFound();
+            }
+
+            if (currentOrganization is not null)
+            {
+                currentOrganization.IsDefault = false;
+            }
+
+            selectedOrganization.IsDefault = true;
+
+            _context.Organizations.Update(selectedOrganization);
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
     }
 }
