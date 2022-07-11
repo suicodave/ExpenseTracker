@@ -97,8 +97,6 @@ namespace Server.Controllers
 
             selectedOrganization.IsDefault = true;
 
-            _context.Organizations.Update(selectedOrganization);
-
             await _context.SaveChangesAsync();
 
             return Ok();
