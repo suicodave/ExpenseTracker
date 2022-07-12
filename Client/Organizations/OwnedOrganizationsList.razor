@@ -1,6 +1,7 @@
 @using Shared.Organizations
 @inject HttpClient _http
 @inject HttpInterceptorService _interceptor
+@inject ILogger<OwnedOrganizationsList> _logger
 
 <div class="d-flex align-center">
     <MudText Color="Color.Primary"
@@ -18,15 +19,31 @@
 
 @foreach (var organization in _organizations)
 {
-    <MudPaper Class="my-2 pa-6 d-flex">
+    <MudPaper Class="my-2 px-6 d-flex align-center"
+    Height="100px">
         <MudText>
             @organization.Name
         </MudText>
 
+
+        @if (@organization.IsDefault)
+        {
+            <MudIcon Icon="@Icons.Filled.CheckCircle"
+        Color="Color.Success"
+        Class="ml-4" />
+        }
+
         <MudSpacer />
 
-        <MudIcon Icon="@Icons.Filled.CheckCircle"
-        Color="Color.Success" />
+        @if (!@organization.IsDefault)
+        {
+
+            <MudMenu Icon="@Icons.Material.Filled.MoreVert">
+                <SetDefaultOrganizationButton Id="@organization.Id"
+            SavedAsDefault="OnSavedAsDefault" />
+            </MudMenu>
+
+        }
     </MudPaper>
 }
 
@@ -45,5 +62,16 @@
     private async Task GetData()
     {
         _organizations = await _http.GetFromJsonAsync<OrganizationResponse[]>("Organizations/Owned")!;
+    }
+
+    private void OnSavedAsDefault(int id)
+    {
+        OrganizationResponse currentDefaultOrg = _organizations.Where(x=>x.IsDefault).First();
+
+        currentDefaultOrg.IsDefault = false;
+
+        OrganizationResponse selectedOrg = _organizations.Where(x=>x.Id == id).First();
+
+        selectedOrg.IsDefault = true;
     }
 }
