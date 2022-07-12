@@ -77,8 +77,8 @@ namespace Server.Controllers
             );
         }
 
-        [HttpPut("{organizationId}/SetCurrent")]
-        public async Task<ActionResult<int>> SetCurrentOrganization(int organizationId)
+        [HttpPut("{organizationId}/SetDefault")]
+        public async Task<ActionResult<int>> SetDefaultOrganization(int organizationId)
         {
             Organization? selectedOrganization = await _context.Organizations.Where(x => x.UserId == _userService.UserId && x.Id == organizationId)
             .FirstOrDefaultAsync();
