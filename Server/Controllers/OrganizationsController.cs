@@ -71,6 +71,7 @@ namespace Server.Controllers
         {
             return Ok(
                 await _context.Organizations.Where(x => x.UserId == _userService.UserId)
+                .OrderByDescending(x => x.Id)
                 .ProjectTo<OrganizationResponse>(_mapper.ConfigurationProvider)
                 .ToListAsync()
             );
