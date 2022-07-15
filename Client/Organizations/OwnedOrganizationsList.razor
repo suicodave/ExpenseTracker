@@ -60,7 +60,7 @@
 
         _organizationAppState.StateChanged += (source, organizations) => OrganizationAppState_StateChanged(source, organizations);
 
-        await GetData();
+        _organizations = _organizationAppState.Organizations;
     }
 
     private async Task GetData()
@@ -86,9 +86,12 @@
 
     private void OrganizationAppState_StateChanged(ComponentBase source, IEnumerable<OrganizationResponse> organizations)
     {
+
         if (source != this)
         {
             _organizations = organizations;
+
+            StateHasChanged();
         }
     }
 

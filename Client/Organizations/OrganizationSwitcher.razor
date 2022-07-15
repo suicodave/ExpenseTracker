@@ -2,6 +2,7 @@
 @inject ILogger<OrganizationSwitcher> _logger
 @inject HttpClient _http
 @inject HttpInterceptorService _httpClientInterceptor
+@inject ISnackbar _snackbar
 
 @implements IDisposable
 
@@ -14,6 +15,7 @@
     Variant="Variant.Outlined"
     Margin="Margin.Dense"
     AdornmentIcon="@Icons.Filled.Groups"
+    ValueChanged="OnOrganizationSelected"
     Value="@defaultOrganization">
 
         @foreach (var organization in Organizations)
@@ -29,7 +31,7 @@
 @code {
     private IEnumerable<OrganizationResponse> Organizations { get; set; } = Enumerable.Empty<OrganizationResponse>();
 
-    private OrganizationResponse? defaultOrganization => Organizations.Where(x=>x.IsDefault).FirstOrDefault();
+    private OrganizationResponse? defaultOrganization => Organizations.Where(x => x.IsDefault).FirstOrDefault();
 
     protected override async Task OnInitializedAsync()
     {
@@ -70,6 +72,35 @@
     {
         Organizations = await _http.GetFromJsonAsync<IEnumerable<OrganizationResponse>>("Organizations/Owned") ??
         Enumerable.Empty<OrganizationResponse>();
+
+        _organizationAppState.UpdateOrganizations(this, Organizations);
+    }
+
+    private async Task OnOrganizationSelected(OrganizationResponse organization)
+    {
+        string path = $"Organizations/{organization.Id}/SetDefault";
+
+        _snackbar.Add("Switching organization. Please wait.", Severity.Info);
+
+        var response = await _http.PutAsync(path, null);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            _snackbar.Add("Failed switching organization.", Severity.Error);
+        }
+
+        _snackbar.Add("Saved successfully.", Severity.Success);
+
+        var currentOrg = Organizations.Where(x => x.IsDefault).FirstOrDefault();
+
+
+        if (currentOrg is not null)
+        {
+            currentOrg.IsDefault = false;
+        }
+
+        organization.IsDefault = true;
+
 
         _organizationAppState.UpdateOrganizations(this, Organizations);
     }
