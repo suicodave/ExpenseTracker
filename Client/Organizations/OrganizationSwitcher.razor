@@ -1,0 +1,76 @@
+@inject OrganizationAppState _organizationAppState
+@inject ILogger<OrganizationSwitcher> _logger
+@inject HttpClient _http
+@inject HttpInterceptorService _httpClientInterceptor
+
+@implements IDisposable
+
+
+
+@if (Organizations.Any())
+{
+    <MudSelect T="OrganizationResponse"
+    FullWidth="false"
+    Variant="Variant.Outlined"
+    Margin="Margin.Dense"
+    AdornmentIcon="@Icons.Filled.Groups"
+    Value="@defaultOrganization">
+
+        @foreach (var organization in Organizations)
+        {
+            <MudSelectItem T="OrganizationResponse"
+        Value="@organization" />
+
+        }
+
+    </MudSelect>
+}
+
+@code {
+    private IEnumerable<OrganizationResponse> Organizations { get; set; } = Enumerable.Empty<OrganizationResponse>();
+
+    private OrganizationResponse? defaultOrganization => Organizations.Where(x=>x.IsDefault).FirstOrDefault();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        if (_organizationAppState.Organizations is null)
+        {
+
+            await GetData();
+        }
+        else
+        {
+            Organizations = _organizationAppState.Organizations;
+        }
+
+        _organizationAppState.StateChanged += (source, organizations) => OrganizationAppState_StateChanged(source,
+        organizations);
+
+    }
+
+
+    private void OrganizationAppState_StateChanged(ComponentBase source, IEnumerable<OrganizationResponse> organizations)
+    {
+        if (source != this)
+        {
+            Organizations = organizations;
+
+            StateHasChanged();
+        }
+    }
+
+    void IDisposable.Dispose()
+    {
+        _organizationAppState.StateChanged -= (source, organizations) => OrganizationAppState_StateChanged(source,
+        organizations);
+    }
+
+    private async Task GetData()
+    {
+        Organizations = await _http.GetFromJsonAsync<IEnumerable<OrganizationResponse>>("Organizations/Owned") ??
+        Enumerable.Empty<OrganizationResponse>();
+
+        _organizationAppState.UpdateOrganizations(this, Organizations);
+    }
+}

@@ -1,11 +1,17 @@
 <MudLayout>
     <MudAppBar Color="Color.Primary"
         Fixed="false"
-        Elevation="0">
+        Elevation="0"
+        class="justify-center">
         <MudIconButton Icon="@Icons.Material.Filled.Menu"
             Color="Color.Inherit"
             Edge="Edge.Start"
             OnClick="ToggleDrawer" />
+        <MudGrid Class="ml-2">
+            <MudItem xl="2">
+                <OrganizationSwitcher />
+            </MudItem>
+        </MudGrid>
         <MudSpacer />
         <MudIconButton Icon="@Icons.Custom.Brands.GitHub"
             Color="Color.Inherit" />
@@ -15,8 +21,8 @@
         DisableOverlay="true">
         <NavigationLinks />
     </MudDrawer>
-   
-     @ChildContent
+
+    @ChildContent
 
 </MudLayout>
 

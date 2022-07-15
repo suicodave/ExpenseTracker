@@ -2,6 +2,8 @@
 @inject HttpClient _http
 @inject HttpInterceptorService _interceptor
 @inject ILogger<OwnedOrganizationsList> _logger
+@inject OrganizationAppState _organizationAppState
+@implements IDisposable
 
 <div class="d-flex align-center">
     <MudText Color="Color.Primary"
@@ -50,28 +52,47 @@
 
 @code {
 
-    private OrganizationResponse[] _organizations { get; set; } = new OrganizationResponse[] { };
+    private IEnumerable<OrganizationResponse> _organizations { get; set; } = Enumerable.Empty<OrganizationResponse>();
 
     protected override async Task OnInitializedAsync()
     {
         _interceptor.RegisterEvent();
+
+        _organizationAppState.StateChanged += (source, organizations) => OrganizationAppState_StateChanged(source, organizations);
 
         await GetData();
     }
 
     private async Task GetData()
     {
-        _organizations = await _http.GetFromJsonAsync<OrganizationResponse[]>("Organizations/Owned")!;
+        _organizations = await _http.GetFromJsonAsync<IEnumerable<OrganizationResponse>>("Organizations/Owned") ??
+        Enumerable.Empty<OrganizationResponse>();
+
+        _organizationAppState.UpdateOrganizations(this, _organizations);
     }
 
     private void OnSavedAsDefault(int id)
     {
-        OrganizationResponse currentDefaultOrg = _organizations.Where(x=>x.IsDefault).First();
+        OrganizationResponse currentDefaultOrg = _organizations.Where(x => x.IsDefault).First();
 
         currentDefaultOrg.IsDefault = false;
 
-        OrganizationResponse selectedOrg = _organizations.Where(x=>x.Id == id).First();
+        OrganizationResponse selectedOrg = _organizations.Where(x => x.Id == id).First();
 
         selectedOrg.IsDefault = true;
+
+        _organizationAppState.UpdateOrganizations(this,_organizations);
+    }
+
+    private void OrganizationAppState_StateChanged(ComponentBase source, IEnumerable<OrganizationResponse> organizations)
+    {
+        if (source != this)
+        {
+            _organizations = organizations;
+        }
+    }
+
+    void IDisposable.Dispose(){
+        _organizationAppState.StateChanged -= (source, organizations) => OrganizationAppState_StateChanged(source, organizations);
     }
 }

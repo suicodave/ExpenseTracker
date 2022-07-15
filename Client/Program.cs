@@ -9,6 +9,7 @@ using Blazored.LocalStorage;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 using Client.Common;
 using MudBlazor;
+using Client.Common.States;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -30,6 +31,8 @@ builder.Services.AddScoped(sp => new HttpClient
 );
 
 builder.Services.AddScoped<HttpInterceptorService>();
+
+builder.Services.AddScoped<OrganizationAppState>();
 
 builder.Services.AddAuthorizationCore();
 
