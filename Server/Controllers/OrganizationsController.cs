@@ -15,7 +15,7 @@ namespace Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Owner")]
+    [Authorize]
     public class OrganizationsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -32,6 +32,7 @@ namespace Server.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Owner")]
         public async Task<ActionResult<int>> CreateOrganization([FromBody] OrganizationRequest request)
         {
             Organization organization = _mapper.Map<Organization>(request);
