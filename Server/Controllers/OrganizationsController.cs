@@ -58,13 +58,6 @@ namespace Server.Controllers
             return BadRequest();
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<OrganizationResponse>>> GetAll()
-        {
-            return Ok(await _context.Organizations.OrderByDescending(x => x.Id)
-            .ProjectTo<OrganizationResponse>(_mapper.ConfigurationProvider)
-            .ToListAsync());
-        }
 
 
         [HttpGet("Owned")]
