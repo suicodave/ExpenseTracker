@@ -1,5 +1,8 @@
 @inject ISnackbar Snackbar
+@inject NavigationManager _navigationManager
 @using System.Net.Http
+@using System.Net
+
 
 
 @ChildContent
@@ -17,7 +20,14 @@
         {
             HttpRequestException error = (HttpRequestException)Error;
 
-            Snackbar.Add($"Request failed! {(int)error.StatusCode!}",Severity.Error);
+            Snackbar.Add($"Request failed! {(int)error.StatusCode!}", Severity.Error);
+
+            if (error.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                _navigationManager.NavigateTo("LogOut");
+            }
+
+
         }
     }
 }

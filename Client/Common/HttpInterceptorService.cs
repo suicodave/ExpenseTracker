@@ -42,7 +42,7 @@ namespace Client.Common
                     _logger.LogInformation("Logging out.");
 
                     
-                    _navigationManager.NavigateTo("LogOut");
+
                     
                     break;
                 default:
