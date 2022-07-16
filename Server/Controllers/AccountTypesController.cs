@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 using Server.AccountTypes;
 using Server.Data;
+using Server.Organizations;
+using Server.Users;
 
 using Shared.AccountTypes;
 
@@ -19,20 +21,31 @@ namespace Server.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly CurrentUserService _currentUser;
 
         public AccountTypesController(
             ApplicationDbContext context,
-            IMapper mapper
+            IMapper mapper,
+            CurrentUserService currentUser
         )
         {
             _context = context;
             _mapper = mapper;
+            _currentUser = currentUser;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AccountTypeResponse>>> GetAccountTypes()
         {
+            Organization? organization = await _context.Organizations.Where(x => x.UserId == _currentUser.UserId & x.IsDefault).FirstOrDefaultAsync();
+
+            if (organization is null)
+            {
+                return Ok(Enumerable.Empty<AccountTypeResponse>());
+            }
+
             return Ok(await _context.AccountTypes
+            .Where(x => x.OrganizationId == organization.Id)
             .OrderByDescending(x => x.Id)
             .ProjectTo<AccountTypeResponse>(_mapper.ConfigurationProvider)
             .ToListAsync());
@@ -43,6 +56,10 @@ namespace Server.Controllers
         public async Task<ActionResult<int>> CreateAccountType(AccountTypeRequest request)
         {
             AccountType accountType = _mapper.Map<AccountType>(request);
+
+            Organization? organization = await _context.Organizations.Where(x => x.UserId == _currentUser.UserId && x.IsDefault).FirstOrDefaultAsync();
+
+            accountType.OrganizationId = organization?.Id ?? 0;
 
             _context.AccountTypes.Add(accountType);
 
