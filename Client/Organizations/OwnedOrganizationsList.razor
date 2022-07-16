@@ -60,7 +60,7 @@
 
         _organizationAppState.StateChanged += (source, organizations) => OrganizationAppState_StateChanged(source, organizations);
 
-        _organizations = _organizationAppState.Organizations;
+        _organizations = _organizationAppState.Organizations ?? Enumerable.Empty<OrganizationResponse>();
     }
 
     private async Task GetData()
