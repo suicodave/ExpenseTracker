@@ -14,7 +14,7 @@ namespace Server.Data.Extensions.EntityConfigurations
             builder.Property(x => x.Name)
             .HasMaxLength(50);
 
-            builder.HasIndex(x => x.Name)
+            builder.HasIndex(x => new { x.Name, x.OrganizationId })
             .IsUnique();
 
         }
