@@ -1,0 +1,71 @@
+@using System.Net
+@inject HttpClient _http
+
+<EditForm Model="@_request"
+    OnValidSubmit="HandleSubmit">
+    <FluentValidationValidator />
+    <MudDialog>
+        <DialogContent>
+            <MudTextField @bind-Value="@_request.Name"
+                Label="Name"
+                Variant="Variant.Outlined"
+                Adornment="Adornment.Start"
+                InputType="@InputType.Text"
+                T="string"
+                For="@(()=>_request.Name)"
+                AutoFocus="true" />
+
+            <br>
+
+            <MudTextField @bind-Value="@_request.Description"
+                Label="Description"
+                Variant="Variant.Outlined"
+                Adornment="Adornment.Start"
+                InputType="@InputType.Text"
+                T="string"
+                For="@(()=>_request.Description)"
+                Lines="5" />
+
+        </DialogContent>
+        <DialogActions>
+            <MudButton OnClick="Cancel">Cancel</MudButton>
+            <MudButton Color="Color.Primary"
+                Variant="Variant.Filled"
+                ButtonType="ButtonType.Submit"
+                Disabled="@_isLoading">Ok</MudButton>
+        </DialogActions>
+    </MudDialog>
+</EditForm>
+
+
+@code {
+
+    [CascadingParameter]
+    private MudDialogInstance _dialogInstance { get; set; }
+
+    private AccountTypeRequest _request { get; set; } = new();
+
+    private bool _isLoading { get; set; } = false;
+
+    private void Cancel() => _dialogInstance.Cancel();
+
+
+    private async Task HandleSubmit()
+    {
+        _isLoading = true;
+
+        var response = await _http.PostAsJsonAsync("AccountTypes", _request);
+
+        if (response.StatusCode == HttpStatusCode.Created)
+        {
+
+            _dialogInstance.Close(DialogResult.Ok(1));
+
+            _isLoading = false;
+
+            return;
+        }
+
+        _isLoading = false;
+    }
+}

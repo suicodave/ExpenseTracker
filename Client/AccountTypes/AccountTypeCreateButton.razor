@@ -1,0 +1,27 @@
+@inject IDialogService _dialogService
+
+<MudButton Color="@Color.Primary"
+    Variant="@Variant.Filled"
+    class="rounded-lg"
+    OnClick="OpenForm">
+    Create
+</MudButton>
+
+
+
+@code {
+    [Parameter]
+    public EventCallback OnCreated { get; set; }
+
+    private async Task OpenForm()
+    {
+        IDialogReference dialogRef = _dialogService.Show<AccountTypeForm>("Create Account Type");
+
+        DialogResult result = await dialogRef.Result;
+
+        if (!result.Cancelled)
+        {
+            await OnCreated.InvokeAsync();
+        }
+    }
+}

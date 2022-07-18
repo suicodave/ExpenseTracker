@@ -1,0 +1,68 @@
+@inject HttpClient _http
+@inject OrganizationAppState _organizationAppState
+@implements IDisposable
+
+<div class="d-flex align-center">
+    <MudText Color="Color.Primary"
+        Class="my-4"
+        Typo="Typo.h5">
+        Account Types
+    </MudText>
+
+    <MudSpacer></MudSpacer>
+
+    <AccountTypeCreateButton OnCreated="GetData" />
+</div>
+
+@foreach (var accountType in _accountTypes)
+{
+    <MudPaper Class="my-2 pa-6 rounded-lg">
+        <MudText Typo="Typo.h5"
+        Class="mb-2">
+            @accountType.Name
+        </MudText>
+
+        <MudText Typo="Typo.subtitle1">
+            @accountType.Description
+        </MudText>
+
+    </MudPaper>
+}
+
+
+@code {
+    private IEnumerable<AccountTypeResponse> _accountTypes { get; set; } = Enumerable.Empty<AccountTypeResponse>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _organizationAppState.StateChanged += async (source, organizations) => await OrganizationAppState_StateChanged(source,
+        organizations);
+
+        await GetData();
+    }
+    private async Task GetData()
+    {
+        _accountTypes = await _http.GetFromJsonAsync<IEnumerable<AccountTypeResponse>>("accountTypes") ??
+        Enumerable.Empty<AccountTypeResponse>();
+
+
+    }
+
+    private async Task OrganizationAppState_StateChanged(ComponentBase source, IEnumerable<OrganizationResponse>
+    organizations)
+    {
+
+        if (source != this)
+        {
+            await GetData();
+
+            StateHasChanged();
+        }
+    }
+
+    void IDisposable.Dispose()
+    {
+        _organizationAppState.StateChanged -= async (source, organizations) => await OrganizationAppState_StateChanged(source,
+        organizations);
+    }
+}
