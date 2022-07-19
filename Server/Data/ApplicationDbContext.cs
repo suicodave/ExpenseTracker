@@ -29,6 +29,8 @@ namespace Server.Data
 
         public DbSet<AccountType> AccountTypes { get; set; }
 
+        public DbSet<UserOrganization> UserOrganizations { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
