@@ -37,7 +37,7 @@ namespace Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AccountTypeResponse>>> GetAccountTypes()
         {
-            Organization? organization = await _context.Organizations.Where(x => x.UserId == _currentUser.UserId & x.IsDefault).FirstOrDefaultAsync();
+            UserOrganization? organization = await _context.UserOrganizations.FirstOrDefaultAsync(x => x.UserId == _currentUser.UserId & x.IsDefault);
 
             if (organization is null)
             {
@@ -57,7 +57,7 @@ namespace Server.Controllers
         {
             AccountType accountType = _mapper.Map<AccountType>(request);
 
-            Organization? organization = await _context.Organizations.Where(x => x.UserId == _currentUser.UserId && x.IsDefault).FirstOrDefaultAsync();
+            UserOrganization? organization = await _context.UserOrganizations.FirstOrDefaultAsync(x => x.UserId == _currentUser.UserId && x.IsDefault);
 
             accountType.OrganizationId = organization?.Id ?? 0;
 

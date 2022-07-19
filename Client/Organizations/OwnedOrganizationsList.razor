@@ -24,7 +24,7 @@
     <MudPaper Class="my-2 px-6 d-flex align-center rounded-lg"
     Height="72px">
         <MudText>
-            @organization.Name
+            @organization.Organization.Name
         </MudText>
 
 
@@ -52,7 +52,7 @@
 
 @code {
 
-    private IEnumerable<OrganizationResponse> _organizations { get; set; } = Enumerable.Empty<OrganizationResponse>();
+    private IEnumerable<UserOrganizationResponse> _organizations { get; set; } = Enumerable.Empty<UserOrganizationResponse>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -60,31 +60,31 @@
 
         _organizationAppState.StateChanged += (source, organizations) => OrganizationAppState_StateChanged(source, organizations);
 
-        _organizations = _organizationAppState.Organizations ?? Enumerable.Empty<OrganizationResponse>();
+        _organizations = _organizationAppState.Organizations ?? Enumerable.Empty<UserOrganizationResponse>();
     }
 
     private async Task GetData()
     {
-        _organizations = await _http.GetFromJsonAsync<IEnumerable<OrganizationResponse>>("Organizations/Owned") ??
-        Enumerable.Empty<OrganizationResponse>();
+        _organizations = await _http.GetFromJsonAsync<IEnumerable<UserOrganizationResponse>>("Organizations/Owned") ??
+        Enumerable.Empty<UserOrganizationResponse>();
 
         _organizationAppState.UpdateOrganizations(this, _organizations);
     }
 
     private void OnSavedAsDefault(int id)
     {
-        OrganizationResponse currentDefaultOrg = _organizations.Where(x => x.IsDefault).First();
+        UserOrganizationResponse currentDefaultOrg = _organizations.Where(x => x.IsDefault).First();
 
         currentDefaultOrg.IsDefault = false;
 
-        OrganizationResponse selectedOrg = _organizations.Where(x => x.Id == id).First();
+        UserOrganizationResponse selectedOrg = _organizations.Where(x => x.Id == id).First();
 
         selectedOrg.IsDefault = true;
 
         _organizationAppState.UpdateOrganizations(this,_organizations);
     }
 
-    private void OrganizationAppState_StateChanged(ComponentBase source, IEnumerable<OrganizationResponse> organizations)
+    private void OrganizationAppState_StateChanged(ComponentBase source, IEnumerable<UserOrganizationResponse> organizations)
     {
 
         if (source != this)

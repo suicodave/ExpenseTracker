@@ -1,4 +1,5 @@
 using Server.Common.Entities;
+using Server.Users;
 
 namespace Server.Organizations
 {
@@ -6,6 +7,6 @@ namespace Server.Organizations
     {
         public string Name { get; set; } = string.Empty;
 
-        public bool IsDefault { get; set; } = false;
+        public ICollection<UserOrganization> UserOrganizations { get; set; } = new List<UserOrganization>();
     }
 }

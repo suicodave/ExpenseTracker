@@ -11,6 +11,9 @@ namespace Server.Data.Extensions.EntityConfigurations
         {
             builder.HasIndex(x=> new {x.UserId, x.OrganizationId})
             .IsUnique();
+
+            builder.HasOne(x=>x.Organization)
+            .WithMany(x=>x.UserOrganizations);
         }
     }
 }

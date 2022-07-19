@@ -11,7 +11,9 @@ namespace Server.Users
         public User User { get; set; }
 
         public int OrganizationId { get; set; }
-        
+
         public Organization Organization { get; set; }
+
+        public bool IsDefault { get; set; } = false;
     }
 }

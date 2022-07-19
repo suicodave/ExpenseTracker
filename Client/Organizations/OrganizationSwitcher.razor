@@ -10,7 +10,7 @@
 
 @if (Organizations.Any())
 {
-    <MudSelect T="OrganizationResponse"
+    <MudSelect T="UserOrganizationResponse"
     FullWidth="false"
     Variant="Variant.Outlined"
     Margin="Margin.Dense"
@@ -20,7 +20,7 @@
 
         @foreach (var organization in Organizations)
         {
-            <MudSelectItem T="OrganizationResponse"
+            <MudSelectItem T="UserOrganizationResponse"
         Value="@organization" />
 
         }
@@ -29,9 +29,10 @@
 }
 
 @code {
-    private IEnumerable<OrganizationResponse> Organizations { get; set; } = Enumerable.Empty<OrganizationResponse>();
+    private IEnumerable<UserOrganizationResponse> Organizations { get; set; } =
+        Enumerable.Empty<UserOrganizationResponse>();
 
-    private OrganizationResponse? defaultOrganization => Organizations.Where(x => x.IsDefault).FirstOrDefault();
+    private UserOrganizationResponse? defaultOrganization => Organizations.Where(x => x.IsDefault).FirstOrDefault();
 
     protected override async Task OnInitializedAsync()
     {
@@ -52,7 +53,8 @@
     }
 
 
-    private void OrganizationAppState_StateChanged(ComponentBase source, IEnumerable<OrganizationResponse> organizations)
+    private void OrganizationAppState_StateChanged(ComponentBase source, IEnumerable<UserOrganizationResponse>
+    organizations)
     {
         if (source != this)
         {
@@ -70,13 +72,13 @@
 
     private async Task GetData()
     {
-        Organizations = await _http.GetFromJsonAsync<IEnumerable<OrganizationResponse>>("Organizations/Owned") ??
-        Enumerable.Empty<OrganizationResponse>();
+        Organizations = await _http.GetFromJsonAsync<IEnumerable<UserOrganizationResponse>>("Organizations/Owned") ??
+        Enumerable.Empty<UserOrganizationResponse>();
 
         _organizationAppState.UpdateOrganizations(this, Organizations);
     }
 
-    private async Task OnOrganizationSelected(OrganizationResponse organization)
+    private async Task OnOrganizationSelected(UserOrganizationResponse organization)
     {
         string path = $"Organizations/{organization.Id}/SetDefault";
 

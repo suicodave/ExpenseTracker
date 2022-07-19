@@ -10,6 +10,7 @@ using Server.Organizations;
 using Server.Users;
 
 using Shared.Organizations;
+using Shared.Users;
 
 namespace Server.Controllers
 {
@@ -38,13 +39,20 @@ namespace Server.Controllers
             Organization organization = _mapper.Map<Organization>(request);
 
             bool hasDefaultOrganization = await _context.Organizations.AnyAsync(
-                x => x.UserId == _userService.UserId && x.IsDefault
+                x => x.UserOrganizations.Any(xx => xx.UserId == _userService.UserId && xx.IsDefault)
             );
+
+            var userOrganization = new UserOrganization
+            {
+                UserId = _userService.UserId,
+            };
 
             if (!hasDefaultOrganization)
             {
-                organization.IsDefault = true;
+                userOrganization.IsDefault = true;
             }
+
+            organization.UserOrganizations.Add(userOrganization);
 
             _context.Organizations.Add(organization);
 
@@ -61,24 +69,24 @@ namespace Server.Controllers
 
 
         [HttpGet("Owned")]
-        public async Task<ActionResult<IEnumerable<OrganizationResponse>>> GetUserOrganizations()
+        public async Task<ActionResult<IEnumerable<UserOrganizationResponse>>> GetUserOrganizations()
         {
             return Ok(
-                await _context.Organizations.Where(x => x.UserId == _userService.UserId)
+                await _context.UserOrganizations
+                .Include(x => x.Organization)
+                .Where(y => y.UserId == _userService.UserId)
                 .OrderByDescending(x => x.Id)
-                .ProjectTo<OrganizationResponse>(_mapper.ConfigurationProvider)
+                .ProjectTo<UserOrganizationResponse>(_mapper.ConfigurationProvider)
                 .ToListAsync()
             );
         }
 
-        [HttpPut("{organizationId}/SetDefault")]
-        public async Task<ActionResult<int>> SetDefaultOrganization(int organizationId)
+        [HttpPut("{userOrganizationId}/SetDefault")]
+        public async Task<ActionResult<int>> SetDefaultOrganization(int userOrganizationId)
         {
-            Organization? selectedOrganization = await _context.Organizations.Where(x => x.UserId == _userService.UserId && x.Id == organizationId)
-            .FirstOrDefaultAsync();
+            UserOrganization? selectedOrganization = await _context.UserOrganizations.FirstOrDefaultAsync(x => x.Id == userOrganizationId);
 
-            Organization? currentOrganization = await _context.Organizations.Where(x => x.UserId == _userService.UserId && x.IsDefault)
-            .FirstOrDefaultAsync();
+            UserOrganization? currentOrganization = await _context.UserOrganizations.FirstOrDefaultAsync(x => x.UserId == _userService.UserId && x.IsDefault);
 
             if (selectedOrganization is null)
             {

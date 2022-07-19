@@ -1,16 +1,16 @@
 using Microsoft.AspNetCore.Components;
 
-using Shared.Organizations;
+using Shared.Users;
 
 namespace Client.Common.States
 {
     public class OrganizationAppState
     {
-        public IEnumerable<OrganizationResponse>? Organizations { get; private set; } = null;
+        public IEnumerable<UserOrganizationResponse>? Organizations { get; private set; } = null;
 
-        public OrganizationResponse? DefaultOrganization => Organizations?.Where(x => x.IsDefault).FirstOrDefault();
+        public UserOrganizationResponse? DefaultOrganization => Organizations?.Where(x => x.IsDefault).FirstOrDefault();
 
-        public void UpdateOrganizations(ComponentBase source, IEnumerable<OrganizationResponse> organizations)
+        public void UpdateOrganizations(ComponentBase source, IEnumerable<UserOrganizationResponse> organizations)
         {
             this.Organizations = organizations;
 
@@ -18,9 +18,9 @@ namespace Client.Common.States
 
         }
 
-        public event Action<ComponentBase, IEnumerable<OrganizationResponse>>? StateChanged;
+        public event Action<ComponentBase, IEnumerable<UserOrganizationResponse>>? StateChanged;
 
-        public void NotifyStateChanged(ComponentBase source, IEnumerable<OrganizationResponse> organizations) => StateChanged?.Invoke(source, organizations);
+        public void NotifyStateChanged(ComponentBase source, IEnumerable<UserOrganizationResponse> organizations) => StateChanged?.Invoke(source, organizations);
 
     }
 }
