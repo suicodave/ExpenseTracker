@@ -49,7 +49,11 @@ namespace Server.Data
                     case EntityState.Added:
                         entry.Entity.CreatedAt = DateTime.Now;
                         entry.Entity.UpdatedAt = DateTime.Now;
-                        entry.Entity.UserId = _currentUserService.UserId;
+                        if (_currentUserService.UserId is not null)
+                        {
+                            entry.Entity.UserId = (int)_currentUserService.UserId;
+                        }
+
                         break;
 
                     case EntityState.Modified:

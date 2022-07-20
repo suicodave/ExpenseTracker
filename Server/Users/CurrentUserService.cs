@@ -13,7 +13,20 @@ namespace Server.Users
 
         public IEnumerable<Claim> Claims => User?.Claims.Select(x => new Claim(x.Type, x.Value)) ?? new List<Claim>();
 
-        public int UserId => int.Parse(User?.Claims.Where(x => x.Type == ClaimTypes.NameIdentifier).FirstOrDefault()?.Value ?? "0");
+        public int? UserId
+        {
+            get
+            {
+                string? userId = User?.Claims?.Where(x => x.Type == ClaimTypes.NameIdentifier)?.FirstOrDefault()?.Value;
+
+                if (userId is null)
+                {
+                    return null;
+                }
+
+                return int.Parse(userId);
+            }
+        }
 
         public CurrentUserService(IHttpContextAccessor httpContext)
         {

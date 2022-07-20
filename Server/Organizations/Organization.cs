@@ -8,5 +8,7 @@ namespace Server.Organizations
         public string Name { get; set; } = string.Empty;
 
         public ICollection<UserOrganization> UserOrganizations { get; set; } = new List<UserOrganization>();
+
+        public static string DefaultName { get; set; }= "Default Organization";
     }
 }

@@ -44,7 +44,7 @@ namespace Server.Controllers
 
             var userOrganization = new UserOrganization
             {
-                UserId = _userService.UserId,
+                UserId = (int)_userService.UserId!,
             };
 
             if (!hasDefaultOrganization)
