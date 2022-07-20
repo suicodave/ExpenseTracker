@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
+using Server.Data;
+using Server.Organizations;
 using Server.Users;
 
 using Shared.Users;
@@ -16,14 +18,17 @@ namespace Server.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly CurrentUserService _currentUserService;
+        private readonly ApplicationDbContext _context;
 
         public UsersController(
             UserManager<User> userManager,
-            CurrentUserService currentUserService
+            CurrentUserService currentUserService,
+            ApplicationDbContext context
         )
         {
             _userManager = userManager;
             _currentUserService = currentUserService;
+            _context = context;
         }
 
         public async Task<ActionResult> Register(RegisterUserRequest request)
@@ -39,6 +44,21 @@ namespace Server.Controllers
 
             await _userManager.AddToRoleAsync(user, Role.OWNER);
 
+            Organization organization = new Organization
+            {
+                Name = Organization.DefaultName,
+                UserId = user.Id,
+            };
+
+            UserOrganization userOrganization = new UserOrganization{
+                UserId = user.Id,
+                IsDefault = true
+            };
+
+            organization.UserOrganizations.Add(userOrganization);
+
+            _context.Organizations.Add(organization);
+
             if (!createdUser.Succeeded)
             {
                 var errors = createdUser.Errors.Select(x => x.Description);
@@ -49,6 +69,8 @@ namespace Server.Controllers
                     Errors = errors
                 });
             }
+
+            await _context.SaveChangesAsync();
 
             return Created("", new CreateUserResponse { IsSuccessful = createdUser.Succeeded });
         }
