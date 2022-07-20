@@ -31,7 +31,8 @@ namespace Server.Controllers
             var user = new User
             {
                 UserName = request.Email,
-                Email = request.Email
+                Email = request.Email,
+                DisplayName = request.DisplayName
             };
 
             var createdUser = await _userManager.CreateAsync(user, request.Password);
