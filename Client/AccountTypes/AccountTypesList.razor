@@ -16,17 +16,17 @@
 
 @foreach (var accountType in _accountTypes)
 {
-    <MudPaper Class="my-2 pa-6 rounded-lg">
-        <MudText Typo="Typo.h5"
+                <MudPaper Class="my-2 pa-6 rounded-lg">
+                    <MudText Typo="Typo.h5"
         Class="mb-2">
             @accountType.Name
-        </MudText>
+                    </MudText>
 
-        <MudText Typo="Typo.subtitle1" class="mud-text-secondary">
+                    <MudText Typo="Typo.subtitle1" class="mud-text-secondary">
             @accountType.Description
-        </MudText>
+                    </MudText>
 
-    </MudPaper>
+                </MudPaper>
 }
 
 
@@ -35,34 +35,24 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _organizationAppState.StateChanged += async (source, organizations) => await OrganizationAppState_StateChanged(source,
-        organizations);
+        _organizationAppState.StateChanged += async () => await OrganizationAppState_StateChanged();
 
         await GetData();
     }
     private async Task GetData()
     {
-        _accountTypes = await _http.GetFromJsonAsync<IEnumerable<AccountTypeResponse>>("accountTypes") ??
-        Enumerable.Empty<AccountTypeResponse>();
-
-
+        _accountTypes = await _http.GetFromJsonAsync<IEnumerable<AccountTypeResponse>>("AccountTypes");
     }
 
-    private async Task OrganizationAppState_StateChanged(ComponentBase source, IEnumerable<UserOrganizationResponse>
-    organizations)
+    private async Task OrganizationAppState_StateChanged()
     {
+        await GetData();
 
-        if (source != this)
-        {
-            await GetData();
-
-            StateHasChanged();
-        }
+        StateHasChanged();
     }
 
     void IDisposable.Dispose()
     {
-        _organizationAppState.StateChanged -= async (source, organizations) => await OrganizationAppState_StateChanged(source,
-        organizations);
+        _organizationAppState.StateChanged -= async () => await OrganizationAppState_StateChanged();
     }
 }

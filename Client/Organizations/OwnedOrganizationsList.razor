@@ -1,4 +1,3 @@
-@using Shared.Organizations
 @inject HttpClient _http
 @inject HttpInterceptorService _interceptor
 @inject ILogger<OwnedOrganizationsList> _logger
@@ -14,7 +13,7 @@
 
     <MudSpacer></MudSpacer>
 
-    <CreateOrganizationButton OnCreated="GetData"></CreateOrganizationButton>
+    <CreateOrganizationButton OnCreated="_organizationAppState.GetData"></CreateOrganizationButton>
 </div>
 
 
@@ -41,8 +40,7 @@
         {
 
             <MudMenu Icon="@Icons.Material.Filled.MoreVert">
-                <SetDefaultOrganizationButton Id="@organization.Id"
-            SavedAsDefault="OnSavedAsDefault" />
+                <SetDefaultOrganizationButton Id="@organization.Id" />
             </MudMenu>
 
         }
@@ -52,50 +50,29 @@
 
 @code {
 
-    private IEnumerable<UserOrganizationResponse> _organizations { get; set; } = Enumerable.Empty<UserOrganizationResponse>();
+    private IEnumerable<UserOrganizationResponse> _organizations => _organizationAppState.Organizations ??
+        Enumerable.Empty<UserOrganizationResponse>();
 
     protected override async Task OnInitializedAsync()
     {
         _interceptor.RegisterEvent();
 
-        _organizationAppState.StateChanged += (source, organizations) => OrganizationAppState_StateChanged(source, organizations);
+        await _organizationAppState.LoadWhenEmpty();
 
-        _organizations = _organizationAppState.Organizations ?? Enumerable.Empty<UserOrganizationResponse>();
+        _organizationAppState.StateChanged += OrganizationAppState_StateChanged;
     }
 
-    private async Task GetData()
+    private void OrganizationAppState_StateChanged()
     {
-        _organizations = await _http.GetFromJsonAsync<IEnumerable<UserOrganizationResponse>>("Organizations/Owned") ??
-        Enumerable.Empty<UserOrganizationResponse>();
-
-        _organizationAppState.UpdateOrganizations(this, _organizations);
+        StateHasChanged();
     }
 
-    private void OnSavedAsDefault(int id)
+
+    void IDisposable.Dispose()
     {
-        UserOrganizationResponse currentDefaultOrg = _organizations.Where(x => x.IsDefault).First();
-
-        currentDefaultOrg.IsDefault = false;
-
-        UserOrganizationResponse selectedOrg = _organizations.Where(x => x.Id == id).First();
-
-        selectedOrg.IsDefault = true;
-
-        _organizationAppState.UpdateOrganizations(this,_organizations);
+        _organizationAppState.StateChanged -= OrganizationAppState_StateChanged;
     }
 
-    private void OrganizationAppState_StateChanged(ComponentBase source, IEnumerable<UserOrganizationResponse> organizations)
-    {
 
-        if (source != this)
-        {
-            _organizations = organizations;
 
-            StateHasChanged();
-        }
-    }
-
-    void IDisposable.Dispose(){
-        _organizationAppState.StateChanged -= (source, organizations) => OrganizationAppState_StateChanged(source, organizations);
-    }
 }

@@ -1,5 +1,6 @@
 @inject HttpClient _http
 @inject ISnackbar _snackbar
+@inject OrganizationAppState _organizationAppState
 
 
 <MudMenuItem OnClick="SetAsDefault">Set As Default</MudMenuItem>
@@ -11,24 +12,17 @@
     [Parameter, EditorRequired]
     public int Id { get; set; }
 
-    [Parameter]
-    public EventCallback<int> SavedAsDefault { get; set; }
-
 
     private async Task SetAsDefault()
     {
 
-        string path = $"Organizations/{Id}/SetDefault";
-
         _snackbar.Add("Setting as default organization. Please wait.", Severity.Info);
 
-        var response = await _http.PutAsync(path, null);
+        var response = await _organizationAppState.SetAsDefault(Id);
 
         if (response.IsSuccessStatusCode)
         {
             _snackbar.Add("Saved successfully.", Severity.Success);
-
-            await SavedAsDefault.InvokeAsync(Id);
         }
 
         return;

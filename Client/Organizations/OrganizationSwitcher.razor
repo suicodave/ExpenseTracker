@@ -11,10 +11,11 @@
 @if (Organizations.Any())
 {
 
-    <div style="@($"background:{Colors.BlueGrey.Lighten5};")" class="rounded">
+    <div style="@switcherBackgroundStyle"
+    class="rounded">
         <MudSelect T="UserOrganizationResponse"
         FullWidth="false"
-        Class="d-block"
+        Class="ma-0"
         Variant="Variant.Outlined"
         Margin="Margin.Dense"
         AdornmentIcon="@Icons.Filled.Groups"
@@ -34,7 +35,7 @@
 }
 
 @code {
-    private IEnumerable<UserOrganizationResponse> Organizations { get; set; } =
+    private IEnumerable<UserOrganizationResponse> Organizations => _organizationAppState.Organizations ??
         Enumerable.Empty<UserOrganizationResponse>();
 
     private UserOrganizationResponse? defaultOrganization => Organizations.Where(x => x.IsDefault).FirstOrDefault();
@@ -42,54 +43,31 @@
     protected override async Task OnInitializedAsync()
     {
 
-        if (_organizationAppState.Organizations is null)
-        {
+        await _organizationAppState.LoadWhenEmpty();
 
-            await GetData();
-        }
-        else
-        {
-            Organizations = _organizationAppState.Organizations;
-        }
-
-        _organizationAppState.StateChanged += (source, organizations) => OrganizationAppState_StateChanged(source,
-        organizations);
+        _organizationAppState.StateChanged += OrganizationAppState_StateChanged;
 
     }
 
+    private string switcherBackgroundStyle = $"background:{Colors.BlueGrey.Lighten5}";
 
-    private void OrganizationAppState_StateChanged(ComponentBase source, IEnumerable<UserOrganizationResponse>
-    organizations)
+
+    private void OrganizationAppState_StateChanged()
     {
-        if (source != this)
-        {
-            Organizations = organizations;
-
-            StateHasChanged();
-        }
+        StateHasChanged();
     }
 
     void IDisposable.Dispose()
     {
-        _organizationAppState.StateChanged -= (source, organizations) => OrganizationAppState_StateChanged(source,
-        organizations);
+        _organizationAppState.StateChanged -= OrganizationAppState_StateChanged;
     }
 
-    private async Task GetData()
-    {
-        Organizations = await _http.GetFromJsonAsync<IEnumerable<UserOrganizationResponse>>("Organizations/Owned") ??
-        Enumerable.Empty<UserOrganizationResponse>();
-
-        _organizationAppState.UpdateOrganizations(this, Organizations);
-    }
 
     private async Task OnOrganizationSelected(UserOrganizationResponse organization)
     {
-        string path = $"Organizations/{organization.Id}/SetDefault";
-
         _snackbar.Add("Switching organization. Please wait.", Severity.Info);
 
-        var response = await _http.PutAsync(path, null);
+        var response = await _organizationAppState.SetAsDefault(organization.Id);
 
         if (!response.IsSuccessStatusCode)
         {
@@ -98,17 +76,5 @@
 
         _snackbar.Add("Saved successfully.", Severity.Success);
 
-        var currentOrg = Organizations.Where(x => x.IsDefault).FirstOrDefault();
-
-
-        if (currentOrg is not null)
-        {
-            currentOrg.IsDefault = false;
-        }
-
-        organization.IsDefault = true;
-
-
-        _organizationAppState.UpdateOrganizations(this, Organizations);
     }
 }
