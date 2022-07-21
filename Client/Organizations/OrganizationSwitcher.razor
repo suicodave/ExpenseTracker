@@ -10,22 +10,27 @@
 
 @if (Organizations.Any())
 {
-    <MudSelect T="UserOrganizationResponse"
-    FullWidth="false"
-    Variant="Variant.Outlined"
-    Margin="Margin.Dense"
-    AdornmentIcon="@Icons.Filled.Groups"
-    ValueChanged="OnOrganizationSelected"
-    Value="@defaultOrganization">
 
-        @foreach (var organization in Organizations)
-        {
-            <MudSelectItem T="UserOrganizationResponse"
-        Value="@organization" />
+    <div style="@($"background:{Colors.BlueGrey.Lighten5};")" class="rounded">
+        <MudSelect T="UserOrganizationResponse"
+        FullWidth="false"
+        Class="d-block"
+        Variant="Variant.Outlined"
+        Margin="Margin.Dense"
+        AdornmentIcon="@Icons.Filled.Groups"
+        ValueChanged="OnOrganizationSelected"
+        Value="@defaultOrganization">
 
-        }
+            @foreach (var organization in Organizations)
+            {
+                <MudSelectItem T="UserOrganizationResponse"
+            Value="@organization" />
 
-    </MudSelect>
+            }
+
+        </MudSelect>
+    </div>
+
 }
 
 @code {
