@@ -1,13 +1,12 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
 using Server.AccountTypes;
 using Server.Data;
-using Server.Organizations;
+using Server.Organizations.Queries;
 using Server.Users;
 
 using Shared.AccountTypes;
@@ -21,23 +20,23 @@ namespace Server.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
-        private readonly CurrentUserService _currentUser;
+        private readonly ISender _mediator;
 
         public AccountTypesController(
             ApplicationDbContext context,
             IMapper mapper,
-            CurrentUserService currentUser
+            ISender mediator
         )
         {
             _context = context;
             _mapper = mapper;
-            _currentUser = currentUser;
+            _mediator = mediator;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AccountTypeResponse>>> GetAccountTypes()
         {
-            UserOrganization? organization = await _context.UserOrganizations.FirstOrDefaultAsync(x => x.UserId == _currentUser.UserId & x.IsDefault);
+            UserOrganization? organization = await _mediator.Send(new GetCurrentOrganizationQuery());
 
             if (organization is null)
             {
@@ -57,7 +56,7 @@ namespace Server.Controllers
         {
             AccountType accountType = _mapper.Map<AccountType>(request);
 
-            UserOrganization? organization = await _context.UserOrganizations.FirstOrDefaultAsync(x => x.UserId == _currentUser.UserId && x.IsDefault);
+            UserOrganization? organization = await _mediator.Send(new GetCurrentOrganizationQuery());
 
             accountType.OrganizationId = organization?.Id ?? 0;
 

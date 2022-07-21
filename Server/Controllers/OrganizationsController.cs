@@ -1,12 +1,15 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 
+using MediatR;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 using Server.Data;
 using Server.Organizations;
+using Server.Organizations.Queries;
 using Server.Users;
 
 using Shared.Organizations;
@@ -23,13 +26,15 @@ namespace Server.Controllers
         private readonly IMapper _mapper;
         private readonly CurrentUserService _userService;
         private readonly ILogger<OrganizationsController> _logger;
+        private readonly ISender _mediator;
 
-        public OrganizationsController(ApplicationDbContext context, IMapper mapper, CurrentUserService userService, ILogger<OrganizationsController> logger)
+        public OrganizationsController(ApplicationDbContext context, IMapper mapper, CurrentUserService userService, ILogger<OrganizationsController> logger, ISender mediator)
         {
             _context = context;
             _mapper = mapper;
             _userService = userService;
             _logger = logger;
+            _mediator = mediator;
         }
 
         [HttpPost]
@@ -86,7 +91,7 @@ namespace Server.Controllers
         {
             UserOrganization? selectedOrganization = await _context.UserOrganizations.FirstOrDefaultAsync(x => x.Id == userOrganizationId);
 
-            UserOrganization? currentOrganization = await _context.UserOrganizations.FirstOrDefaultAsync(x => x.UserId == _userService.UserId && x.IsDefault);
+            UserOrganization? currentOrganization = await _mediator.Send(new GetCurrentOrganizationQuery());
 
             if (selectedOrganization is null)
             {

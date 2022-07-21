@@ -1,12 +1,15 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 
+using MediatR;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 using Server.Data;
+using Server.Organizations.Queries;
 using Server.Users;
 
 using Shared.Member;
@@ -20,22 +23,22 @@ namespace Server.Controllers
     public class MembersController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private readonly CurrentUserService _currentUser;
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
+        private readonly ISender _mediator;
 
-        public MembersController(ApplicationDbContext context, CurrentUserService currentUser, IMapper mapper, UserManager<User> userManager)
+        public MembersController(ApplicationDbContext context, IMapper mapper, UserManager<User> userManager, ISender mediator)
         {
             _context = context;
-            _currentUser = currentUser;
             _mapper = mapper;
             _userManager = userManager;
+            _mediator = mediator;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserResponse>>> GetMembers()
         {
-            UserOrganization? currentOrganization = await _context.UserOrganizations.FirstOrDefaultAsync(x => x.UserId == _currentUser.UserId && x.IsDefault);
+            UserOrganization? currentOrganization = await _mediator.Send(new GetCurrentOrganizationQuery());
 
             if (currentOrganization is null)
             {
@@ -58,7 +61,7 @@ namespace Server.Controllers
 
             if (result.Succeeded)
             {
-                UserOrganization? currentOrganization = await _context.UserOrganizations.FirstOrDefaultAsync(x => x.UserId == _currentUser.UserId && x.IsDefault);
+                UserOrganization? currentOrganization = await _mediator.Send(new GetCurrentOrganizationQuery());
 
                 await _userManager.AddToRoleAsync(user, request.RoleName);
 

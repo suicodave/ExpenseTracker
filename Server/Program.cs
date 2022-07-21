@@ -1,6 +1,8 @@
 using System.Reflection;
 using System.Text;
 
+using MediatR;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -29,6 +31,8 @@ services.AddScoped<DatabaseInitializer>();
 services.AddScoped<CurrentUserService>();
 
 services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+services.AddMediatR(Assembly.GetExecutingAssembly());
 
 
 services.AddOpenApiDocument(configure =>
