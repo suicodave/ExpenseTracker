@@ -1,5 +1,7 @@
 using MediatR;
+
 using Microsoft.EntityFrameworkCore;
+
 using Server.Data;
 using Server.Users;
 
@@ -23,7 +25,7 @@ namespace Server.Organizations.Queries
 
             public Task<UserOrganization?> Handle(GetCurrentOrganizationQuery request, CancellationToken cancellationToken)
             {
-                return _context.UserOrganizations.FirstOrDefaultAsync(x => x.UserId == _currentUser.UserId && x.IsDefault);
+                return _context.UserOrganizations.FirstOrDefaultAsync(x => x.UserId == _currentUser.UserId && x.IsDefault, cancellationToken);
             }
         }
     }
