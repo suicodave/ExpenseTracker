@@ -44,6 +44,7 @@
 
         await GetData();
     }
+    
     private async Task GetData()
     {
         _members = await _http.GetFromJsonAsync<IEnumerable<MemberResponse>>("Members") ?? Enumerable.Empty<MemberResponse>();
