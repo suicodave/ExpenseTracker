@@ -16,17 +16,15 @@
 
 @foreach (var accountType in _accountTypes)
 {
-                <MudPaper Class="my-2 pa-6 rounded-lg">
-                    <MudText Typo="Typo.h5"
-        Class="mb-2">
+    <MudPaper Class="my-2 pa-6 rounded-lg">
+        <MudText Typo="Typo.h5" Class="mb-2">
             @accountType.Name
-                    </MudText>
+        </MudText>
 
-                    <MudText Typo="Typo.subtitle1" class="mud-text-secondary">
+        <MudText Typo="Typo.subtitle1" class="mud-text-secondary">
             @accountType.Description
-                    </MudText>
-
-                </MudPaper>
+        </MudText>
+    </MudPaper>
 }
 
 
