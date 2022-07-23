@@ -34,6 +34,17 @@ namespace Server.Controllers
             .ToListAsync());
         }
 
+        [HttpGet("Members")]
+        public async Task<ActionResult<IEnumerable<RoleResponse>>> GetAvailableMemberRoles()
+        {
+            var excludedRoles = new string[] { Role.ADMINISTRATOR, Role.OWNER };
+
+            return Ok(await _roleManager.Roles
+            .Where(x=> !excludedRoles.Any(xx=>xx == x.Name))
+            .ProjectTo<RoleResponse>(_mapper.ConfigurationProvider)
+            .ToListAsync());
+        }
+
         [HttpPost]
         public async Task<ActionResult> Create(RoleRequest request)
         {

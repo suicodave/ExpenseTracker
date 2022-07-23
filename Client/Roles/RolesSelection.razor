@@ -1,0 +1,54 @@
+@inject HttpClient _http
+@using System.Linq.Expressions
+
+@inherits InputBase<string>
+
+<MudSelect T="string"
+    Label="Role"
+    Variant="Variant.Outlined"
+    AnchorOrigin="Origin.BottomCenter"
+    @bind-Value="@CurrentValue"
+    For="@ValidationFor">
+
+    @foreach (var role in _roles)
+    {
+        <MudSelectItem T="string"
+        Value="@role.Name" />
+    }
+
+
+</MudSelect>
+
+
+
+@code {
+    
+
+    [Parameter, EditorRequired] public Expression<Func<string>> ValidationFor { get; set; } = default!;
+
+    private IEnumerable<RoleResponse> _roles { get; set; } = Enumerable.Empty<RoleResponse>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetData();
+    }
+
+
+    private async Task GetData()
+    {
+        _roles = await _http.GetFromJsonAsync<IEnumerable<RoleResponse>>("Roles/Members") ?? Enumerable.Empty<RoleResponse>();
+
+        if (_roles.Any())
+        {
+            CurrentValue = _roles.ElementAt(0).Name;
+        }
+    }
+
+    protected override bool TryParseValueFromString(string? value, out string result, out string validationErrorMessage)
+    {
+        result = value;
+        validationErrorMessage = null;
+        return true;
+    }
+
+}
