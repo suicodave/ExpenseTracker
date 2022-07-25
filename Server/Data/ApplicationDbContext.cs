@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 using Server.AccountTypes;
 using Server.Common.Entities;
+using Server.Expenses;
 using Server.Organizations;
 using Server.Users;
 
@@ -31,6 +32,8 @@ namespace Server.Data
 
         public DbSet<UserOrganization> UserOrganizations { get; set; }
 
+
+        public DbSet<Expense> Expenses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
