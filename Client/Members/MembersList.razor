@@ -1,7 +1,3 @@
-@inject HttpClient _http
-@inject OrganizationAppState _organizationAppState
-@implements IDisposable
-
 <div class="d-flex align-center">
     <MudText Color="Color.Primary"
         Class="my-4"
@@ -11,56 +7,41 @@
 
     <MudSpacer></MudSpacer>
 
-    <MemberCreateButton OnCreated="GetData"/>
+    @if (_list is not null)
+    {
+        <MemberCreateButton OnCreated="_list.GetData" />
+    }
+
 
 </div>
 
-@foreach (var member in _members)
-{
-    <MudPaper Class="my-2 pa-6 rounded-lg d-flex align-center gap-4">
-        <MudAvatar Color="Color.Primary"
-        Image="https://img.freepik.com/premium-psd/3d-cartoon-character-avatar-isolated-3d-rendering_235528-587.jpg?w=826" Size="Size.Large">
-            @member.Email[0]
-        </MudAvatar>
+<OrganizationDependentList TEntity="MemberResponse"
+    ListApiPath="Members"
+    @ref="_list">
+    <ListItem>
+        <MudPaper Class="my-2 pa-6 rounded-lg d-flex align-center gap-4">
+            <MudAvatar Color="Color.Primary"
+                Image="https://img.freepik.com/premium-psd/3d-cartoon-character-avatar-isolated-3d-rendering_235528-587.jpg?w=826"
+                Size="Size.Large">
+                @context.Email[0]
+            </MudAvatar>
 
-        <div>
-            <MudText Typo="Typo.h5">
-                @member.DisplayName
-            </MudText>
+            <div>
+                <MudText Typo="Typo.h5">
+                    @context.DisplayName
+                </MudText>
 
-            <MudText Typo="Typo.subtitle1"
-            class="mud-text-secondary">
-                @member.Email
-            </MudText>
-        </div>
+                <MudText Typo="Typo.subtitle1"
+                    class="mud-text-secondary">
+                    @context.Email
+                </MudText>
+            </div>
 
-    </MudPaper>
-}
+        </MudPaper>
+    </ListItem>
+
+</OrganizationDependentList>
 
 @code {
-    private IEnumerable<MemberResponse> _members { get; set; } = Enumerable.Empty<MemberResponse>();
-
-    protected override async Task OnInitializedAsync()
-    {
-        _organizationAppState.StateChanged += async () => await OrganizationAppState_StateChanged();
-
-        await GetData();
-    }
-    
-    private async Task GetData()
-    {
-        _members = await _http.GetFromJsonAsync<IEnumerable<MemberResponse>>("Members") ?? Enumerable.Empty<MemberResponse>();
-    }
-
-    private async Task OrganizationAppState_StateChanged()
-    {
-        await GetData();
-
-        StateHasChanged();
-    }
-
-    void IDisposable.Dispose()
-    {
-        _organizationAppState.StateChanged -= async () => await OrganizationAppState_StateChanged();
-    }
+    private OrganizationDependentList<MemberResponse> _list = default!;
 }

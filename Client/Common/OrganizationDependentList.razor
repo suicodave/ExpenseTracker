@@ -1,0 +1,46 @@
+@inject HttpClient _http
+@inject OrganizationAppState _organizationAppState
+@implements IDisposable
+
+@typeparam TEntity
+
+
+@foreach (var item in _items)
+{
+    @ListItem(item)
+    ;
+}
+
+@code {
+    [Parameter,EditorRequired]
+    public string ListApiPath { get; set; } = string.Empty;
+
+    [Parameter]
+    public RenderFragment<TEntity> ListItem { get; set; }
+
+    private IEnumerable<TEntity> _items { get; set; } = Enumerable.Empty<TEntity>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _organizationAppState.StateChanged += async () => await OrganizationAppState_StateChanged();
+
+        await GetData();
+    }
+
+    public async Task GetData()
+    {
+        _items = await _http.GetFromJsonAsync<IEnumerable<TEntity>>(ListApiPath) ?? Enumerable.Empty<TEntity>();
+    }
+
+    private async Task OrganizationAppState_StateChanged()
+    {
+        await GetData();
+
+        StateHasChanged();
+    }
+
+    void IDisposable.Dispose()
+    {
+        _organizationAppState.StateChanged -= async () => await OrganizationAppState_StateChanged();
+    }
+}

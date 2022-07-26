@@ -1,7 +1,3 @@
-@inject HttpClient _http
-@inject OrganizationAppState _organizationAppState
-@implements IDisposable
-
 <div class="d-flex align-center">
     <MudText Color="Color.Primary"
         Class="my-4"
@@ -11,46 +7,28 @@
 
     <MudSpacer></MudSpacer>
 
-    <AccountTypeCreateButton OnCreated="GetData" />
+    <AccountTypeCreateButton OnCreated="_list.GetData" />
 </div>
 
-@foreach (var accountType in _accountTypes)
-{
-    <MudPaper Class="my-2 pa-6 rounded-lg">
-        <MudText Typo="Typo.h5" Class="mb-2">
-            @accountType.Name
-        </MudText>
+<OrganizationDependentList TEntity="AccountTypeResponse"
+    ListApiPath="AccountTypes"
+    @ref="_list">
+    <ListItem>
+        <MudPaper Class="my-2 pa-6 rounded-lg">
+            <MudText Typo="Typo.h5"
+                Class="mb-2">
+                @context.Name
+            </MudText>
 
-        <MudText Typo="Typo.subtitle1" class="mud-text-secondary">
-            @accountType.Description
-        </MudText>
-    </MudPaper>
-}
+            <MudText Typo="Typo.subtitle1"
+                class="mud-text-secondary">
+                @context.Description
+            </MudText>
+        </MudPaper>
+    </ListItem>
+</OrganizationDependentList>
 
 
 @code {
-    private IEnumerable<AccountTypeResponse> _accountTypes { get; set; } = Enumerable.Empty<AccountTypeResponse>();
-
-    protected override async Task OnInitializedAsync()
-    {
-        _organizationAppState.StateChanged += async () => await OrganizationAppState_StateChanged();
-
-        await GetData();
-    }
-    private async Task GetData()
-    {
-        _accountTypes = await _http.GetFromJsonAsync<IEnumerable<AccountTypeResponse>>("AccountTypes");
-    }
-
-    private async Task OrganizationAppState_StateChanged()
-    {
-        await GetData();
-
-        StateHasChanged();
-    }
-
-    void IDisposable.Dispose()
-    {
-        _organizationAppState.StateChanged -= async () => await OrganizationAppState_StateChanged();
-    }
+    private OrganizationDependentList<AccountTypeResponse> _list = default!;
 }
