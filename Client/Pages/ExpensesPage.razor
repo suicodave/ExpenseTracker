@@ -4,7 +4,22 @@
 
 <AuthorizedLayout>
 
-    <MudContainer MaxWidth="MaxWidth.Small">
-        <ExpensesList/>
+    <MudContainer MaxWidth="MaxWidth.Small"
+        Class="px-0">
+
+
+        <MudTabs Outlined="true"
+            Border="true"
+            PanelClass="pt-4 px-2">
+            <MudTabPanel Text="Pending Expenses">
+                <ExpensesList />
+            </MudTabPanel>
+            <MudTabPanel Text="Completed Expenses">
+                To Do
+            </MudTabPanel>
+
+        </MudTabs>
+
+
     </MudContainer>
 </AuthorizedLayout>
