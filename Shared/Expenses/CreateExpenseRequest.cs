@@ -5,5 +5,7 @@ namespace Shared.Expenses
         public decimal Amount { get; set; } = 0;
 
         public string Description { get; set; } = string.Empty;
+
+        public DateTime? EffectiveDate { get; set; } = DateTime.Today;
     }
 }

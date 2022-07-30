@@ -8,5 +8,7 @@ namespace Shared.Expenses
 
         public string Description { get; set; } = string.Empty;
 
+        public DateTime EffectiveDate { get; set; }
+
     }
 }

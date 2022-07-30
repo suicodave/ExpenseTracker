@@ -11,6 +11,8 @@ namespace Server.Expenses
 
         public ExpenseStatus Status { get; set; } = ExpenseStatus.Pending;
 
+        public DateTime EffectiveDate { get; set; }
+
         public int OrganizationId { get; set; }
 
         public Organization Organization { get; set; }

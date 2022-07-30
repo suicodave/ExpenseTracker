@@ -1,0 +1,36 @@
+@inject IDialogService _dialogService
+@typeparam TForm where TForm: ComponentBase
+
+<MudButton Class="rounded-lg"
+    Variant="Variant.Filled"
+    Color="Color.Primary"
+    OnClick="OpenForm">
+    <MudText>
+        @ChildContent
+    </MudText>
+</MudButton>
+
+
+@code {
+
+    [Parameter]
+    public EventCallback OnCreated { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter, EditorRequired]
+    public string Title { get; set; } = string.Empty;
+
+    private async Task OpenForm()
+    {
+        IDialogReference dialogRef = _dialogService.Show<TForm>(Title);
+
+        DialogResult result = await dialogRef.Result;
+
+        if (!result.Cancelled)
+        {
+            await OnCreated.InvokeAsync();
+        }
+    }
+}

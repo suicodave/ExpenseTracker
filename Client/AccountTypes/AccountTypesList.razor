@@ -7,7 +7,7 @@
 
     <MudSpacer></MudSpacer>
 
-    <AccountTypeCreateButton OnCreated="_list.GetData" />
+    <AccountTypeCreateButton OnCreated="@(()=> _list.GetData())" />
 </div>
 
 <OrganizationDependentList TEntity="AccountTypeResponse"
