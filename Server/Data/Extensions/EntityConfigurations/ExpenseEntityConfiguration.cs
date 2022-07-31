@@ -16,6 +16,9 @@ namespace Server.Data.Extensions.EntityConfigurations
 
             builder.Property(x => x.Amount)
             .HasPrecision(18, 2);
+
+            builder.HasMany(x=>x.Accounts)
+            .WithOne(x=>x.Expense);
         }
     }
 }

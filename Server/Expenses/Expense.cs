@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 using Server.Common.Entities;
 using Server.Organizations;
 
@@ -16,6 +18,9 @@ namespace Server.Expenses
         public int OrganizationId { get; set; }
 
         public Organization Organization { get; set; }
+
+
+        public ICollection<ExpenseAccount> Accounts { get; set; }
     }
 
     public enum ExpenseStatus

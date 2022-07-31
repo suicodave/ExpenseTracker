@@ -27,13 +27,13 @@ namespace Server.Data
 
         public DbSet<Organization> Organizations { get; set; }
 
-
         public DbSet<AccountType> AccountTypes { get; set; }
 
         public DbSet<UserOrganization> UserOrganizations { get; set; }
 
-
         public DbSet<Expense> Expenses { get; set; }
+
+        public DbSet<ExpenseAccount> ExpenseAccounts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
