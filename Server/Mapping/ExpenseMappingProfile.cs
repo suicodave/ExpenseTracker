@@ -13,6 +13,8 @@ namespace Server.Mapping
             CreateMap<CreateExpenseRequest, Expense>();
 
             CreateMap<Expense, ExpenseResponse>();
+
+            CreateMap<CreateExpenseAccountRequest, ExpenseAccount>();
         }
     }
 }
