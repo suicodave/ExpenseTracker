@@ -29,7 +29,8 @@ namespace Server.Controllers
 
         }
         [HttpPost("{expenseId}/Accounts")]
-        public async Task<ActionResult> AddAccount(int expenseId, CreateExpenseAccountRequest request)
+        [Authorize(Roles = "Accountant")]
+        public async Task<ActionResult> AddAccount(int expenseId, CreateExpenseAccountRequest request, CancellationToken cancellationToken)
         {
             bool expenseExists = await _context.Expenses.AnyAsync(x => x.Id == expenseId);
 
@@ -44,7 +45,7 @@ namespace Server.Controllers
 
             _context.ExpenseAccounts.Add(account);
 
-            int result = await _context.SaveChangesAsync();
+            int result = await _context.SaveChangesAsync(cancellationToken: cancellationToken);
 
             if (result > 0)
             {
