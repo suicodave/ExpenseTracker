@@ -1,0 +1,49 @@
+<MudPaper Class="my-2 pa-6 rounded-lg">
+    <div class="d-flex justify-space-between mb-2">
+        <MudText Typo="Typo.subtitle1"
+            class="mud-text-secondary">
+            @Expense.EffectiveDate.ToLongDateString()
+        </MudText>
+        <h4 class="red-text text-accent-4">
+            @Expense.Amount.ToString("#,###.##")
+        </h4>
+    </div>
+
+
+    <MudText Typo="Typo.subtitle1"
+        class="mud-text-secondary">
+        @Expense.Description
+    </MudText>
+
+    <br>
+
+    <div class="d-flex align-center">
+        <MudText Class="mr-2">Accounts</MudText>
+
+        <ExpenseAccountCreateButton Expense="@Expense" />
+    </div>
+
+    @if (Expense.Accounts.Any())
+    {
+        <MudList>
+            @foreach (var account in Expense.Accounts)
+            {
+                <MudListItem Class="px-0">
+                    <MudText Class="d-flex justify-space-between mud-text-secondary">
+                        <span>@account.AccountType.Name</span>
+                        <span>@account.Amount.ToString("#,###.##")</span>
+                    </MudText>
+                </MudListItem>
+            }
+
+        </MudList>
+    }
+
+
+</MudPaper>
+
+
+@code {
+    [Parameter, EditorRequired]
+    public ExpenseResponse Expense { get; set; }
+}

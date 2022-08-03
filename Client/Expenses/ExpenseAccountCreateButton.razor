@@ -1,0 +1,27 @@
+@inject IDialogService _dialogService
+
+<MudIconButton Color="Color.Secondary"
+    Icon="@Icons.Material.Filled.Add"
+    DisableElevation="true"
+    Variant="Variant.Outlined"
+    Size="Size.Small" OnClick="OpenForm" />
+
+@code {
+    [Parameter, EditorRequired]
+    public ExpenseResponse Expense { get; set; }
+
+    [Parameter]
+    public EventCallback OnCreated { get; set; }
+
+    private async Task OpenForm()
+    {
+        IDialogReference dialogRef = _dialogService.Show<ExpenseAccountForm>("Tag Account");
+
+        DialogResult result = await dialogRef.Result;
+
+        if (!result.Cancelled)
+        {
+            await OnCreated.InvokeAsync();
+        }
+    }
+}

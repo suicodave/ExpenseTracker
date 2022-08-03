@@ -15,23 +15,7 @@
     ListApiPath="Expenses/Pending"
     @ref="_list">
     <ListItem>
-        <MudPaper Class="my-2 pa-6 rounded-lg">
-            <div class="d-flex justify-space-between mb-2">
-                <MudText Typo="Typo.subtitle1"
-                    class="mud-text-secondary">
-                    @context.EffectiveDate.ToLongDateString()
-                </MudText>
-                <h4 class="red-text text-accent-4">
-                    @context.Amount.ToString("#,###.##")
-                </h4>
-            </div>
-
-
-            <MudText Typo="Typo.subtitle1"
-                class="mud-text-secondary">
-                @context.Description
-            </MudText>
-        </MudPaper>
+        <ExpenseListItem Expense="@context" />
     </ListItem>
 </OrganizationDependentList>
 
