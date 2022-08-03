@@ -1,13 +1,17 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
 using Server.Data;
 using Server.Expenses;
 using Server.Organizations.Queries;
 using Server.Users;
+
 using Shared.Expenses;
 
 namespace Server.Controllers
@@ -38,7 +42,10 @@ namespace Server.Controllers
                 return Ok(Enumerable.Empty<ExpenseResponse>());
             }
 
-            return Ok(await _context.Expenses.Where(x => x.OrganizationId == organization.OrganizationId && x.Status == ExpenseStatus.Pending).ProjectTo<ExpenseResponse>(_mapper.ConfigurationProvider).ToListAsync());
+            return Ok(await _context.Expenses
+            .Include(x => x.Accounts)
+            .ThenInclude(x => x.AccountType)
+            .Where(x => x.OrganizationId == organization.OrganizationId && x.Status == ExpenseStatus.Pending).ProjectTo<ExpenseResponse>(_mapper.ConfigurationProvider).ToListAsync());
 
         }
 

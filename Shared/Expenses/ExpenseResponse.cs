@@ -10,5 +10,7 @@ namespace Shared.Expenses
 
         public DateTime EffectiveDate { get; set; }
 
+        public IEnumerable<ExpenseAccountResponse> Accounts { get; set; }
+
     }
 }
