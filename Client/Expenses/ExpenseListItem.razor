@@ -20,7 +20,7 @@
     <div class="d-flex align-center">
         <MudText Class="mr-2">Accounts</MudText>
 
-        <ExpenseAccountCreateButton Expense="@Expense" />
+        <ExpenseAccountCreateButton Expense="@Expense" OnCreated="@(()=> OnCreatedAccount.InvokeAsync())" />
     </div>
 
     @if (Expense.Accounts.Any())
@@ -46,4 +46,7 @@
 @code {
     [Parameter, EditorRequired]
     public ExpenseResponse Expense { get; set; }
+
+    [Parameter]
+    public EventCallback OnCreatedAccount { get; set; }
 }

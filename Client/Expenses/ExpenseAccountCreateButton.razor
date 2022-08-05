@@ -4,7 +4,8 @@
     Icon="@Icons.Material.Filled.Add"
     DisableElevation="true"
     Variant="Variant.Outlined"
-    Size="Size.Small" OnClick="OpenForm" />
+    Size="Size.Small"
+    OnClick="OpenForm" />
 
 @code {
     [Parameter, EditorRequired]
@@ -15,7 +16,9 @@
 
     private async Task OpenForm()
     {
-        IDialogReference dialogRef = _dialogService.Show<ExpenseAccountForm>("Tag Account");
+        var parameters = new DialogParameters { ["Expense"] = Expense };
+
+        IDialogReference dialogRef = _dialogService.Show<CreateExpenseAccountForm>("Tag Account", parameters);
 
         DialogResult result = await dialogRef.Result;
 

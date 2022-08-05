@@ -1,5 +1,5 @@
 <div class="d-flex align-center">
-    
+
     <MudSpacer></MudSpacer>
 
     <CreateButton TForm="CreateExpenseForm"
@@ -15,7 +15,8 @@
     ListApiPath="Expenses/Pending"
     @ref="_list">
     <ListItem>
-        <ExpenseListItem Expense="@context" />
+        <ExpenseListItem Expense="@context"
+            OnCreatedAccount="@(()=> _list.GetData())" />
     </ListItem>
 </OrganizationDependentList>
 

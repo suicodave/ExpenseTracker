@@ -1,0 +1,73 @@
+@using System.Net
+@inject HttpClient _http
+
+<EditForm Model="@_request"
+    OnValidSubmit="HandleSubmit">
+    <FluentValidationValidator />
+    <MudDialog>
+        <DialogContent>
+            <AccountTypeSelection ValidationFor="@(()=>_request.AccountTypeId)"
+                @bind-Value="@_request.AccountTypeId" />
+
+            <br>
+
+            <MudTextField @bind-Value="@_request.Amount"
+                Label="Amount"
+                Variant="Variant.Outlined"
+                Adornment="Adornment.Start"
+                InputType="@InputType.Text"
+                T="decimal"
+                For="@(()=>_request.Amount)"
+                AutoFocus="true" />
+
+        </DialogContent>
+        <DialogActions>
+            <MudButton OnClick="Cancel">Cancel</MudButton>
+            <MudButton Color="Color.Primary"
+                Variant="Variant.Filled"
+                ButtonType="ButtonType.Submit"
+                Disabled="@_isLoading">Ok</MudButton>
+        </DialogActions>
+    </MudDialog>
+</EditForm>
+
+
+@code {
+
+    [CascadingParameter]
+    private MudDialogInstance _dialogInstance { get; set; }
+
+    [Parameter]
+    public ExpenseResponse Expense { get; set; }
+
+    private CreateExpenseAccountRequest _request { get; set; } = new();
+
+
+    private bool _isLoading { get; set; } = false;
+
+    private void Cancel() => _dialogInstance.Cancel();
+
+    public DateTime date { get; set; }
+
+    private string _path => $"Expenses/{Expense.Id.ToString()}/Accounts";
+
+
+    private async Task HandleSubmit()
+    {
+        _isLoading = true;
+
+        var response = await _http.PostAsJsonAsync(_path, _request);
+
+        if (response.StatusCode == HttpStatusCode.Created)
+        {
+
+            _dialogInstance.Close(DialogResult.Ok(1));
+
+            _isLoading = false;
+
+            return;
+        }
+
+        _isLoading = false;
+    }
+}

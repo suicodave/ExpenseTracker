@@ -1,0 +1,56 @@
+@inject HttpClient _http
+@using System.Linq.Expressions
+
+
+@inherits InputBase<int>
+
+<MudSelect T="int"
+    Label="Account Type"
+    Variant="Variant.Outlined"
+    AnchorOrigin="Origin.BottomCenter"
+    @bind-Value="@CurrentValue"
+    For="@ValidationFor">
+
+    @foreach (var accountType in _accountTypes)
+    {
+        <MudSelectItem T="int"
+        Value="@accountType.Id"> @accountType.Name </MudSelectItem>
+    }
+
+</MudSelect>
+
+
+@code {
+    [Parameter, EditorRequired]
+    public Expression<Func<int>> ValidationFor { get; set; } = default!;
+
+    private IEnumerable<AccountTypeResponse> _accountTypes { get; set; } = Enumerable.Empty<AccountTypeResponse>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        await GetData();
+    }
+
+    private async Task GetData()
+    {
+        _accountTypes = await _http.GetFromJsonAsync<IEnumerable<AccountTypeResponse>>("AccountTypes") ??
+        Enumerable.Empty<AccountTypeResponse>();
+
+        if (_accountTypes.Any())
+        {
+            CurrentValue = _accountTypes.ElementAt(0).Id;
+        }
+    }
+
+    protected override bool TryParseValueFromString(string? value, out int result, out string validationErrorMessage)
+    {
+
+        result = int.Parse(value ?? string.Empty);
+
+        validationErrorMessage = null;
+
+        return true;
+    }
+}
