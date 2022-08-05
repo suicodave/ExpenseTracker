@@ -12,7 +12,7 @@ using Shared.Expenses;
 namespace Server.Controllers
 {
     [ApiController]
-    [Route("api/Expense")]
+    [Route("api/Expenses")]
     [Authorize]
     public class ExpenseAccountsController : ControllerBase
     {
@@ -29,7 +29,7 @@ namespace Server.Controllers
 
         }
         [HttpPost("{expenseId}/Accounts")]
-        [Authorize(Roles = "Accountant")]
+        [Authorize(Roles = "Accountant,Owner")]
         public async Task<ActionResult> AddAccount(int expenseId, CreateExpenseAccountRequest request, CancellationToken cancellationToken)
         {
             bool expenseExists = await _context.Expenses.AnyAsync(x => x.Id == expenseId);
