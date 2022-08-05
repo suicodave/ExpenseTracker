@@ -44,7 +44,7 @@ namespace Server.Controllers
             }
 
             return Ok(await _context.AccountTypes
-            .Where(x => x.OrganizationId == organization.Id)
+            .Where(x => x.OrganizationId == organization.OrganizationId)
             .OrderByDescending(x => x.Id)
             .ProjectTo<AccountTypeResponse>(_mapper.ConfigurationProvider)
             .ToListAsync());
