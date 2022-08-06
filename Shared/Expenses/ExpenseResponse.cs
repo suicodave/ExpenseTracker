@@ -12,5 +12,9 @@ namespace Shared.Expenses
 
         public IEnumerable<ExpenseAccountResponse> Accounts { get; set; }
 
+        public decimal UnliquidatedBalance => Amount - Accounts.Sum(x => x.Amount);
+
+        public bool IsBalanced => UnliquidatedBalance == 0;
+
     }
 }

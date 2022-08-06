@@ -20,7 +20,13 @@
     <div class="d-flex align-center">
         <MudText Class="mr-2">Accounts</MudText>
 
-        <ExpenseAccountCreateButton Expense="@Expense" OnCreated="@(()=> OnCreatedAccount.InvokeAsync())" />
+        @if (!Expense.IsBalanced)
+        {
+            <ExpenseAccountCreateButton Expense="@Expense"
+            OnCreated="@(()=> OnCreatedAccount.InvokeAsync())" />
+        }
+
+
     </div>
 
     @if (Expense.Accounts.Any())

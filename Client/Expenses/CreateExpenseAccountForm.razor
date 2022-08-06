@@ -11,14 +11,15 @@
 
             <br>
 
-            <MudTextField @bind-Value="@_request.Amount"
+
+            <MudNumericField @bind-Value="@_request.Amount"
                 Label="Amount"
                 Variant="Variant.Outlined"
-                Adornment="Adornment.Start"
-                InputType="@InputType.Text"
+                Min="0"
+                Max="@Expense.UnliquidatedBalance"
                 T="decimal"
                 For="@(()=>_request.Amount)"
-                AutoFocus="true" />
+                HideSpinButtons="true" />
 
         </DialogContent>
         <DialogActions>
@@ -42,7 +43,6 @@
 
     private CreateExpenseAccountRequest _request { get; set; } = new();
 
-
     private bool _isLoading { get; set; } = false;
 
     private void Cancel() => _dialogInstance.Cancel();
@@ -51,6 +51,10 @@
 
     private string _path => $"Expenses/{Expense.Id.ToString()}/Accounts";
 
+    protected override void OnInitialized()
+    {
+        _request.Amount = Expense.UnliquidatedBalance;
+    }
 
     private async Task HandleSubmit()
     {
