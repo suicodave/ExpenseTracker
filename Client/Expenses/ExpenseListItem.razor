@@ -4,7 +4,7 @@
             class="mud-text-secondary">
             @Expense.EffectiveDate.ToLongDateString()
         </MudText>
-        <h4 class="red-text text-accent-4">
+        <h4 class="red-text text-accent-4 mr-8">
             @Expense.Amount.ToString("#,###.##")
         </h4>
     </div>
@@ -23,7 +23,7 @@
         @if (!Expense.IsBalanced)
         {
             <ExpenseAccountCreateButton Expense="@Expense"
-            OnCreated="@(()=> OnCreatedAccount.InvokeAsync())" />
+            OnCreated="HandleChange" />
         }
 
 
@@ -34,13 +34,35 @@
         <MudList>
             @foreach (var account in Expense.Accounts)
             {
-                <MudListItem Class="px-0">
-                    <MudText Class="d-flex justify-space-between mud-text-secondary">
+                <MudListItem Class="p-0">
+                    <MudText Class="d-flex align-center mud-text-secondary align-center">
                         <span>@account.AccountType.Name</span>
-                        <span>@account.Amount.ToString("#,###.##")</span>
+
+                        <MudSpacer />
+
+                        <span class="mr-2">@account.Amount.ToString("#,###.##")</span>
+
+                        <DeleteExpenseAccountButton Account="@account"
+                    OnDeleted="HandleChange" />
+
                     </MudText>
                 </MudListItem>
             }
+
+            <MudDivider />
+
+            <MudListItem Class="p-0">
+                <MudText Class="d-flex align-center mud-text-secondary align-center"
+                Typo="Typo.h6">
+                    <span class="">Total</span>
+
+                    <MudSpacer />
+
+                    <span class="mr-8 mud-primary-text">@Expense.Accounts.Sum(x=>x.Amount).ToString("#,###.##")
+                    </span>
+
+                </MudText>
+            </MudListItem>
 
         </MudList>
     }
@@ -54,5 +76,10 @@
     public ExpenseResponse Expense { get; set; }
 
     [Parameter]
-    public EventCallback OnCreatedAccount { get; set; }
+    public EventCallback OnChanges { get; set; }
+
+    public async Task HandleChange()
+    {
+        await OnChanges.InvokeAsync();
+    }
 }

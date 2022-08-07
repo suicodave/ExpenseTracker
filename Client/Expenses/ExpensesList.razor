@@ -16,7 +16,7 @@
     @ref="_list">
     <ListItem>
         <ExpenseListItem Expense="@context"
-            OnCreatedAccount="@(()=> _list.GetData())" />
+            OnChanges="@(()=> _list.GetData())" />
     </ListItem>
 </OrganizationDependentList>
 

@@ -54,5 +54,36 @@ namespace Server.Controllers
 
             return BadRequest();
         }
+
+        [HttpDelete("Accounts/{accountId}")]
+        [Authorize(Roles = "Accountant,Owner")]
+        public async Task<ActionResult> DeleteAccount(int accountId)
+        {
+
+            var account = await _context.ExpenseAccounts
+            .Include(x => x.Expense)
+            .FirstOrDefaultAsync(x => x.Id == accountId);
+
+            if (account is null)
+            {
+                return NotFound();
+            }
+
+            if (account.Expense.Status != ExpenseStatus.Pending)
+            {
+                return BadRequest();
+            }
+
+            _context.ExpenseAccounts.Remove(account);
+
+            int affectedRows = await _context.SaveChangesAsync();
+
+            if (affectedRows == 1)
+            {
+                return Ok();
+            }
+
+            return NotFound();
+        }
     }
 }

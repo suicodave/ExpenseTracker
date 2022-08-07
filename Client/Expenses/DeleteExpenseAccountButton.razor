@@ -1,0 +1,47 @@
+@inject HttpClient _http
+@inject IDialogService _dialog
+
+<MudIconButton Color="Color.Secondary"
+    Icon="@Icons.Material.Filled.Delete"
+    DisableElevation="true"
+    Size="Size.Small"
+    Disabled="@_isDeleting"
+    OnClick="Delete" />
+
+
+
+@code {
+    [Parameter, EditorRequired]
+    public ExpenseAccountResponse Account { get; set; }
+
+    [Parameter]
+    public EventCallback OnDeleted { get; set; }
+
+    private bool _isDeleting { get; set; } = false;
+
+    private async Task Delete()
+    {
+        string path = $"Expenses/Accounts/{Account.Id.ToString()}";
+
+        bool? shouldDelete = await _dialog.ShowMessageBox(
+        "Warning",
+        "Are you sure you want to delete this account?",
+        yesText: "Yes", cancelText: "Cancel");
+
+        if ((shouldDelete is null) || shouldDelete == false)
+        {
+            return;
+        }
+
+        _isDeleting = true;
+
+        var result = await _http.DeleteAsync(path);
+
+        _isDeleting = false;
+
+        if (result.IsSuccessStatusCode)
+        {
+            await OnDeleted.InvokeAsync();
+        }
+    }
+}
