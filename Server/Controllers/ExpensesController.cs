@@ -91,7 +91,7 @@ namespace Server.Controllers
                 return NotFound();
             }
 
-            if (expense.Amount != expense.Accounts.Sum(x => x.Amount))
+            if (expense.Amount != expense.Accounts.Sum(x => x.Amount) && expense.Status != ExpenseStatus.Pending)
             {
                 return BadRequest();
             }
