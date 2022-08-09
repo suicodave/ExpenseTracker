@@ -50,7 +50,7 @@ namespace Server.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Clerk")]
+        [Authorize(Roles = "Owner,Clerk")]
         public async Task<ActionResult> CreateExpense(CreateExpenseRequest request)
         {
             UserOrganization? organization = await _mediator.Send(new GetCurrentOrganizationQuery());
