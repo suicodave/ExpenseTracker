@@ -77,5 +77,35 @@ namespace Server.Controllers
 
             return BadRequest();
         }
+
+        [HttpPut("{expenseId}/Complete")]
+        [Authorize(Roles = "Owner,Accountant")]
+        public async Task<ActionResult> CompleteExpense(int expenseId, CancellationToken cancellationToken)
+        {
+            Expense? expense = await _context.Expenses
+            .Include(x => x.Accounts)
+            .FirstOrDefaultAsync(x => x.Id == expenseId);
+
+            if (expense is null)
+            {
+                return NotFound();
+            }
+
+            if (expense.Amount != expense.Accounts.Sum(x => x.Amount))
+            {
+                return BadRequest();
+            }
+
+            expense.Status = ExpenseStatus.Completed;
+
+            int affectedRows = await _context.SaveChangesAsync(cancellationToken);
+
+            if (affectedRows == 1)
+            {
+                return Ok();
+            }
+
+            return BadRequest();
+        }
     }
 }
