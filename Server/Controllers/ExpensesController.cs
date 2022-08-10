@@ -12,6 +12,7 @@ using Server.Expenses;
 using Server.Organizations.Queries;
 using Server.Users;
 
+using Shared.Common.Expenses;
 using Shared.Expenses;
 
 namespace Server.Controllers
@@ -46,6 +47,23 @@ namespace Server.Controllers
             .Include(x => x.Accounts)
             .ThenInclude(x => x.AccountType)
             .Where(x => x.OrganizationId == organization.OrganizationId && x.Status == ExpenseStatus.Pending).ProjectTo<ExpenseResponse>(_mapper.ConfigurationProvider).ToListAsync());
+
+        }
+
+        [HttpGet("Completed")]
+        public async Task<ActionResult<IEnumerable<ExpenseResponse>>> GetCompletedExpenses()
+        {
+            UserOrganization? organization = await _mediator.Send(new GetCurrentOrganizationQuery());
+
+            if (organization is null)
+            {
+                return Ok(Enumerable.Empty<ExpenseResponse>());
+            }
+
+            return Ok(await _context.Expenses
+            .Include(x => x.Accounts)
+            .ThenInclude(x => x.AccountType)
+            .Where(x => x.OrganizationId == organization.OrganizationId && x.Status == ExpenseStatus.Completed).ProjectTo<ExpenseResponse>(_mapper.ConfigurationProvider).ToListAsync());
 
         }
 

@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Server.Data;
 using Server.Expenses;
 
+using Shared.Common.Expenses;
 using Shared.Expenses;
 
 namespace Server.Controllers

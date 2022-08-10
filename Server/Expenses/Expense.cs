@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Server.Common.Entities;
 using Server.Organizations;
 
+using Shared.Common.Expenses;
+
 namespace Server.Expenses
 {
     public class Expense : AuditableEntity<int>
@@ -23,9 +25,5 @@ namespace Server.Expenses
         public ICollection<ExpenseAccount> Accounts { get; set; }
     }
 
-    public enum ExpenseStatus
-    {
-        Pending,
-        Completed,
-    }
+    
 }

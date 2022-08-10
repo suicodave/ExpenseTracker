@@ -12,10 +12,25 @@
             Border="true"
             PanelClass="pt-4 px-2">
             <MudTabPanel Text="Pending Expenses">
-                <ExpensesList />
+                @if (_pendingList is not null)
+                {
+                    <div class="d-flex align-center">
+
+                        <MudSpacer></MudSpacer>
+
+                        <CreateButton TForm="CreateExpenseForm"
+                        Title="Create Expense"
+                        OnCreated="_pendingList.GetData">
+                            Create
+                        </CreateButton>
+                    </div>
+                }
+
+                <ExpensesList @ref="_pendingList"
+                    Status="ExpenseStatus.Pending" />
             </MudTabPanel>
             <MudTabPanel Text="Completed Expenses">
-                To Do
+                <ExpensesList Status="ExpenseStatus.Completed" />
             </MudTabPanel>
 
         </MudTabs>
@@ -23,3 +38,7 @@
 
     </MudContainer>
 </AuthorizedLayout>
+
+@code {
+    private ExpensesList _pendingList = default!;
+}

@@ -1,26 +1,42 @@
-<div class="d-flex align-center">
-
-    <MudSpacer></MudSpacer>
-
-    <CreateButton TForm="CreateExpenseForm"
-        Title="Create Expense"
-        OnCreated="@(()=> _list.GetData())">
-        Create
-    </CreateButton>
-</div>
-
-<br>
-
 <OrganizationDependentList TEntity="ExpenseResponse"
-    ListApiPath="Expenses/Pending"
+    ListApiPath="@_endpoint"
     @ref="_list">
     <ListItem>
         <ExpenseListItem Expense="@context"
-            OnChanges="@(()=> _list.GetData())" />
+            OnChanges="GetData" />
     </ListItem>
 </OrganizationDependentList>
 
 
 @code {
     private OrganizationDependentList<ExpenseResponse> _list = default!;
+
+    [Parameter, EditorRequired]
+    public ExpenseStatus Status { get; set; }
+
+    private string _endpoint
+    {
+        get
+        {
+            string endpoint = string.Empty;
+
+            switch (Status)
+            {
+                case ExpenseStatus.Completed:
+                    endpoint = ExpenseStatus.Completed.ToString();
+                    break;
+
+                default:
+                    endpoint = ExpenseStatus.Pending.ToString();
+                    break;
+            }
+
+            return $"Expenses/{endpoint}";
+        }
+    }
+
+    public async Task GetData()
+    {
+        await _list.GetData();
+    }
 }

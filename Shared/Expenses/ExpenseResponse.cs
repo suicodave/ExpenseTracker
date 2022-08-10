@@ -1,4 +1,5 @@
 using Shared.Common;
+using Shared.Common.Expenses;
 
 namespace Shared.Expenses
 {
@@ -9,6 +10,8 @@ namespace Shared.Expenses
         public string Description { get; set; } = string.Empty;
 
         public DateTime EffectiveDate { get; set; }
+
+        public ExpenseStatus Status { get; set; }
 
         public IEnumerable<ExpenseAccountResponse> Accounts { get; set; }
 

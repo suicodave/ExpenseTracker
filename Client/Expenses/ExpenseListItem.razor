@@ -1,4 +1,4 @@
-<MudPaper Class="my-2 pa-6 rounded-lg">
+<MudPaper Class="my-2 pa-6 pl-8 rounded-lg">
     <div class="d-flex justify-space-between mb-2">
         <MudText Typo="Typo.subtitle1"
             class="mud-text-secondary">
@@ -20,7 +20,7 @@
     <div class="d-flex align-center">
         <MudText Class="mr-2">Accounts</MudText>
 
-        @if (!Expense.IsBalanced)
+        @if (!Expense.IsBalanced && Expense.Status == ExpenseStatus.Pending)
         {
             <ExpenseAccountCreateButton Expense="@Expense"
             OnCreated="HandleChange" />
@@ -42,8 +42,12 @@
 
                         <span class="mr-2">@account.Amount.ToString("#,###.##")</span>
 
-                        <DeleteExpenseAccountButton Account="@account"
-                    OnDeleted="HandleChange" />
+                        @if (Expense.Status == ExpenseStatus.Pending)
+                        {
+                            <DeleteExpenseAccountButton Account="@account"                    OnDeleted="HandleChange" />
+                        }else{
+                            <span class="mr-6"></span>
+                        }
 
                     </MudText>
                 </MudListItem>
