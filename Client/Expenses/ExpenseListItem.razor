@@ -72,6 +72,15 @@
             </MudListItem>
 
         </MudList>
+
+        if (Expense.IsBalanced && Expense.Status == ExpenseStatus.Pending)
+        {
+            <div class="d-flex justify-end mt-4">
+                <CompleteExpenseButton Expense="@Expense"
+            OnCompleted="HandleChange" />
+            </div>
+
+        }
     }
 
 

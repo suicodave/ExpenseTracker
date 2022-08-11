@@ -1,0 +1,60 @@
+@inject HttpClient _http
+@inject ISnackbar _snackBar
+@inject IDialogService _dialog
+
+<MudButton Variant="Variant.Filled"
+    Color="Color.Primary"
+    Class="rounded-lg"
+    Disabled="@_isSending"
+    OnClick="CompleteExpense">
+
+    <MudText>Complete</MudText>
+</MudButton>
+
+@code {
+
+    [Parameter, EditorRequired]
+    public ExpenseResponse Expense { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback OnCompleted { get; set; } = default!;
+
+    private bool _isSending = false;
+
+    private string _endpoint => $"Expenses/{Expense.Id}/Complete";
+
+    private void ToggleIsSending(bool isSending = false)
+    {
+        _isSending = isSending;
+
+        StateHasChanged();
+    }
+
+    private async Task CompleteExpense()
+    {
+        bool? shouldComplete = await _dialog.ShowMessageBox(null, "Mark as completed?",
+        yesText: "Yes", cancelText: "Cancel");
+
+        if ((shouldComplete is null) || shouldComplete == false)
+        {
+            return;
+        }
+
+        ToggleIsSending(true);
+
+        var result = await _http.PutAsync(_endpoint, null);
+
+        ToggleIsSending();
+
+        if (result.IsSuccessStatusCode)
+        {
+            _snackBar.Add("The expense has been marked as completed!", Severity.Success);
+
+            await OnCompleted.InvokeAsync();
+
+            return;
+        }
+
+        _snackBar.Add("Unable to mark the expense as completed!", Severity.Error);
+    }
+}
