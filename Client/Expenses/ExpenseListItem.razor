@@ -44,8 +44,11 @@
 
                         @if (Expense.Status == ExpenseStatus.Pending)
                         {
-                            <DeleteExpenseAccountButton Account="@account"                    OnDeleted="HandleChange" />
-                        }else{
+                            <DeleteExpenseAccountButton Account="@account"
+                    OnDeleted="HandleChange" />
+                        }
+                        else
+                        {
                             <span class="mr-6"></span>
                         }
 
