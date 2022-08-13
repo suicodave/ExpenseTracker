@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-
 using Server.Common.Entities;
-using Server.Organizations;
 
 using Shared.Common.Expenses;
 
@@ -15,8 +12,8 @@ namespace Server.Expenses
 
         public ExpenseStatus Status { get; set; } = ExpenseStatus.Pending;
 
-        public DateTime EffectiveDate { get; set; }
+        public DateTime EffectiveDate { get; set; } = default!;
 
-        public ICollection<ExpenseAccount> Accounts { get; set; }
+        public ICollection<ExpenseAccount> Accounts { get; set; } = new List<ExpenseAccount>();
     }
 }
