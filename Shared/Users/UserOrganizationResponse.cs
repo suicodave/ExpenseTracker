@@ -3,10 +3,8 @@ using Shared.Organizations;
 
 namespace Shared.Users
 {
-    public class UserOrganizationResponse : AuditableEntityResponse<int>
+    public class UserOrganizationResponse : OrganizationDependentResponse<int>
     {
-        public OrganizationResponse Organization { get; set; }
-
         public bool IsDefault { get; set; }
 
         public override bool Equals(object? o)
@@ -16,9 +14,7 @@ namespace Shared.Users
             return other?.Id == Id;
         }
 
-
         public override int GetHashCode() => Id.GetHashCode();
-
 
         public override string ToString() => Organization.Name;
     }

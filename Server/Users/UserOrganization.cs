@@ -1,18 +1,15 @@
+using Server.Common.Entities;
 using Server.Organizations;
 
 namespace Server.Users
 {
-    public class UserOrganization
+    public class UserOrganization : OrganizationDependentEntity
     {
         public int Id { get; set; }
 
         public int UserId { get; set; }
 
         public User User { get; set; }
-
-        public int OrganizationId { get; set; }
-
-        public Organization Organization { get; set; }
 
         public bool IsDefault { get; set; } = false;
     }

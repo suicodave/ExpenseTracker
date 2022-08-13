@@ -7,7 +7,7 @@ using Shared.Common.Expenses;
 
 namespace Server.Expenses
 {
-    public class Expense : AuditableEntity<int>
+    public class Expense : OrganizationDependentEntity<int>
     {
         public decimal Amount { get; set; } = 0;
 
@@ -17,13 +17,6 @@ namespace Server.Expenses
 
         public DateTime EffectiveDate { get; set; }
 
-        public int OrganizationId { get; set; }
-
-        public Organization Organization { get; set; }
-
-
         public ICollection<ExpenseAccount> Accounts { get; set; }
     }
-
-    
 }

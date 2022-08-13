@@ -3,7 +3,7 @@ using Shared.Common.Expenses;
 
 namespace Shared.Expenses
 {
-    public class ExpenseResponse : AuditableEntityResponse<int>
+    public class ExpenseResponse : OrganizationDependentResponse<int>
     {
         public decimal Amount { get; set; } = 0;
 
@@ -13,11 +13,10 @@ namespace Shared.Expenses
 
         public ExpenseStatus Status { get; set; }
 
-        public IEnumerable<ExpenseAccountResponse> Accounts { get; set; }
+        public IEnumerable<ExpenseAccountResponse> Accounts { get; set; } = default!;
 
         public decimal UnliquidatedBalance => Amount - Accounts.Sum(x => x.Amount);
 
         public bool IsBalanced => UnliquidatedBalance == 0;
-
     }
 }
