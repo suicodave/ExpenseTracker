@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 using Server.AccountTypes;
+using Server.Budgets;
 using Server.Common.Entities;
 using Server.Expenses;
 using Server.Organizations;
@@ -34,6 +35,8 @@ namespace Server.Data
         public DbSet<Expense> Expenses { get; set; }
 
         public DbSet<ExpenseAccount> ExpenseAccounts { get; set; }
+
+        public DbSet<BudgetTemplate> BudgetTemplates { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
