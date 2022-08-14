@@ -58,7 +58,7 @@ namespace Server.Controllers
 
             UserOrganization? organization = await _mediator.Send(new GetCurrentOrganizationQuery());
 
-            accountType.OrganizationId = organization?.Id ?? 0;
+            accountType.OrganizationId = organization?.OrganizationId ?? 0;
 
             _context.AccountTypes.Add(accountType);
 
