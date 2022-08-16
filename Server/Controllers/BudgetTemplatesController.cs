@@ -1,9 +1,12 @@
+
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 
 using MediatR;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 using Server.Budgets;
 using Server.Data;
@@ -22,7 +25,7 @@ namespace Server.Controllers
         private readonly IMapper _mapper;
 
         private readonly ApplicationDbContext _context;
-        
+
         private readonly ISender _mediator;
 
         public BudgetTemplatesController(
@@ -34,6 +37,23 @@ namespace Server.Controllers
             _mapper = mapper;
             _context = context;
             _mediator = mediator;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<BudgetTemplateResponse>>> GetBudgetTemplates()
+        {
+            UserOrganization? organization = await _mediator.Send(new GetCurrentOrganizationQuery());
+
+            if (organization is null)
+            {
+                return Ok(Enumerable.Empty<BudgetTemplateResponse>());
+            }
+
+            return Ok(await _context.BudgetTemplates
+            .Where(x => x.OrganizationId == organization.OrganizationId)
+            .OrderByDescending(x => x.Id)
+            .ProjectTo<BudgetTemplateResponse>(_mapper.ConfigurationProvider)
+            .ToListAsync());
         }
 
         [HttpPost]
@@ -62,5 +82,8 @@ namespace Server.Controllers
 
             return BadRequest();
         }
+
+
+
     }
 }

@@ -11,6 +11,8 @@ namespace Server.Mapping
         public BudgetTemplateMappingProfile()
         {
             CreateMap<CreateBudgetTemplateRequest, BudgetTemplate>();
+
+            CreateMap<BudgetTemplate, BudgetTemplateResponse>();
         }
     }
 }

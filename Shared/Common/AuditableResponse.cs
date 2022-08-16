@@ -6,7 +6,7 @@ namespace Shared.Common
 
         public DateTime UpdatedAt { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int UserId { get; set; }
     }
 
     public class AuditableEntityResponse<TKey> : AuditableEntityResponse
