@@ -50,6 +50,7 @@ namespace Server.Controllers
             }
 
             return Ok(await _context.BudgetTemplates
+            .Include(x => x.AccountType)
             .Where(x => x.OrganizationId == organization.OrganizationId)
             .OrderByDescending(x => x.Id)
             .ProjectTo<BudgetTemplateResponse>(_mapper.ConfigurationProvider)
