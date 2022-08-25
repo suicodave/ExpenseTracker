@@ -7,6 +7,14 @@
 
     <MudSpacer></MudSpacer>
 
+    @if (_list is not null)
+    {
+        <CreateButton TForm="CreateBudgetTemplateForm"
+        Title="Create Budget Template"
+        OnCreated="_list.GetData">
+            Create
+        </CreateButton>
+    }
 </div>
 
 <OrganizationDependentList TEntity="BudgetTemplateResponse"
@@ -14,15 +22,19 @@
     @ref="_list">
     <ListItem>
         <MudPaper Class="my-2 pa-6 rounded-lg d-flex justify-space-between align-center">
-            <MudText Typo="Typo.h5"
-                Class="mb-2">
+            <MudText Typo="Typo.h5">
                 @context.AccountType.Name
             </MudText>
 
-            <MudText Typo="Typo.h6"
-                class="mud-text-secondary">
-                @context.Amount
-            </MudText>
+            <div class="d-flex justify-space-between align-center">
+                <MudText Typo="Typo.h6"
+                    class="mud-text-secondary mr-6">
+                    @context.Amount.ToString("#,###.##")
+                </MudText>
+                <BudgetTemplateActiveStatusSwitcher BudgetTemplate="@context" />
+            </div>
+
+
         </MudPaper>
     </ListItem>
 </OrganizationDependentList>

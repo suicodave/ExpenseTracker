@@ -10,5 +10,7 @@ namespace Server.Budgets
         public AccountType AccountType { get; set; } = default!;
 
         public decimal Amount { get; set; } = 0;
+
+        public bool IsActive { get; set; } = true;
     }
 }

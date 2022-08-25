@@ -10,5 +10,7 @@ namespace Shared.BudgetTemplates
         public int AccountTypeId { get; set; }
 
         public decimal Amount { get; set; }
+
+        public bool IsActive { get; set; }
     }
 }

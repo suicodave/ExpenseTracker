@@ -1,0 +1,38 @@
+@inject HttpClient _http
+@inject ISnackbar _snackbar
+
+<MudSwitch Color="Color.Primary"
+    T="bool"
+    Checked="BudgetTemplate.IsActive"
+    CheckedChanged="HandleChange" />
+
+
+@code {
+    [Parameter, EditorRequired]
+    public BudgetTemplateResponse BudgetTemplate { get; set; } = default!;
+
+    private string _path => $"BudgetTemplates/{BudgetTemplate.Id}/Activate";
+
+    private async Task HandleChange(bool IsActive)
+    {
+        _snackbar.Add("Switching Status...", Severity.Info);
+
+        BudgetTemplate.IsActive = IsActive;
+
+        var httpResponse = await _http.PutAsJsonAsync(_path, new ActivateBudgetRequest
+        {
+            IsActive = IsActive
+        });
+
+        if (!httpResponse.IsSuccessStatusCode)
+        {
+            BudgetTemplate.IsActive = !IsActive;
+
+            _snackbar.Add("Status change failed! The action is reverted.", Severity.Error);
+
+            return;
+        }
+
+        _snackbar.Add("Status changed successfully!", Severity.Success);
+    }
+}
