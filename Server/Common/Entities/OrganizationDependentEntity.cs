@@ -2,7 +2,14 @@ using Server.Organizations;
 
 namespace Server.Common.Entities
 {
-    public class OrganizationDependentEntity<TKey> : AuditableEntity<TKey>
+    public interface IOrganizationDependentEntity
+    {
+        public int OrganizationId { get; set; }
+
+        public Organization Organization { get; set; }
+    }
+
+    public class OrganizationDependentEntity<TKey> : AuditableEntity<TKey>, IOrganizationDependentEntity
     where TKey : struct
     {
         public int OrganizationId { get; set; }
@@ -10,10 +17,11 @@ namespace Server.Common.Entities
         public Organization Organization { get; set; } = default!;
     }
 
-    public class OrganizationDependentEntity
+    public class OrganizationDependentEntity : IOrganizationDependentEntity
     {
         public int OrganizationId { get; set; }
 
         public Organization Organization { get; set; } = default!;
     }
+
 }

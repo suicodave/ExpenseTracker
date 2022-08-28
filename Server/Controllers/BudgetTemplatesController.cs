@@ -15,6 +15,8 @@ using Server.Users;
 
 using Shared.BudgetTemplates;
 
+using Server.Data.Extensions;
+
 namespace Server.Controllers
 {
     [ApiController]
@@ -50,8 +52,8 @@ namespace Server.Controllers
             }
 
             return Ok(await _context.BudgetTemplates
+            .FilterByOrganization(organization)
             .Include(x => x.AccountType)
-            .Where(x => x.OrganizationId == organization.OrganizationId)
             .OrderByDescending(x => x.IsActive)
             .ThenBy(x => x.AccountType.Name)
             .ProjectTo<BudgetTemplateResponse>(_mapper.ConfigurationProvider)

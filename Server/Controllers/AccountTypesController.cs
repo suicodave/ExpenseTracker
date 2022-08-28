@@ -1,11 +1,15 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
 using Server.AccountTypes;
 using Server.Data;
+using Server.Data.Extensions;
 using Server.Organizations.Queries;
 using Server.Users;
 
@@ -44,7 +48,7 @@ namespace Server.Controllers
             }
 
             return Ok(await _context.AccountTypes
-            .Where(x => x.OrganizationId == organization.OrganizationId)
+            .FilterByOrganization(organization)
             .OrderByDescending(x => x.Id)
             .ProjectTo<AccountTypeResponse>(_mapper.ConfigurationProvider)
             .ToListAsync());

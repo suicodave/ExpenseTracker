@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 using Server.Data;
+using Server.Data.Extensions;
 using Server.Expenses;
 using Server.Organizations.Queries;
 using Server.Users;
@@ -44,9 +45,11 @@ namespace Server.Controllers
             }
 
             return Ok(await _context.Expenses
+            .FilterByOrganization(organization)
+            .Where(x => x.Status == ExpenseStatus.Pending)
             .Include(x => x.Accounts)
             .ThenInclude(x => x.AccountType)
-            .Where(x => x.OrganizationId == organization.OrganizationId && x.Status == ExpenseStatus.Pending).ProjectTo<ExpenseResponse>(_mapper.ConfigurationProvider).ToListAsync());
+            .ProjectTo<ExpenseResponse>(_mapper.ConfigurationProvider).ToListAsync());
 
         }
 
@@ -61,9 +64,11 @@ namespace Server.Controllers
             }
 
             return Ok(await _context.Expenses
+            .FilterByOrganization(organization)
+            .Where(x => x.Status == ExpenseStatus.Completed)
             .Include(x => x.Accounts)
             .ThenInclude(x => x.AccountType)
-            .Where(x => x.OrganizationId == organization.OrganizationId && x.Status == ExpenseStatus.Completed).ProjectTo<ExpenseResponse>(_mapper.ConfigurationProvider).ToListAsync());
+            .ProjectTo<ExpenseResponse>(_mapper.ConfigurationProvider).ToListAsync());
 
         }
 
