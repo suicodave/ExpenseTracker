@@ -1,0 +1,41 @@
+<div class="d-flex align-center">
+    <MudText Color="Color.Primary"
+        Class="my-4"
+        Typo="Typo.h5">
+        Budgets
+    </MudText>
+
+    <MudSpacer></MudSpacer>
+
+    @if (_list is not null)
+    {
+        <CreateButton TForm="CreateBudgetHeaderForm"
+        Title="Create a Budget"
+        OnCreated="_list.GetData">
+            Create
+        </CreateButton>
+    }
+</div>
+
+<OrganizationDependentList TEntity="BudgetHeaderResponse"
+    ListApiPath="BudgetHeaders"
+    @ref="_list">
+    <ListItem>
+        <MudPaper Class="my-2 pa-6 rounded-lg d-flex justify-space-between align-center">
+            <MudText Typo="Typo.body1">
+                @context.CoveredFrom.ToShortDateString() - @context.CoveredTo.ToShortDateString()
+            </MudText>
+
+            <div class="d-flex justify-space-between align-center">
+
+            </div>
+
+
+        </MudPaper>
+    </ListItem>
+</OrganizationDependentList>
+
+
+@code {
+    private OrganizationDependentList<BudgetHeaderResponse> _list = default!;
+}

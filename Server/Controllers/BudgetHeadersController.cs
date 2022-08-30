@@ -47,6 +47,7 @@ namespace Server.Controllers
 
             IEnumerable<BudgetHeaderResponse> budgetHeaders = await _context.BudgetHeaders
             .FilterByOrganization(userOrganization)
+            .OrderByDescending(x => x.Id)
             .ProjectTo<BudgetHeaderResponse>(_mapper.ConfigurationProvider)
             .ToListAsync();
 
@@ -54,7 +55,7 @@ namespace Server.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateBudgetHeader(BudgetHeaderRequest request)
+        public async Task<ActionResult> CreateBudgetHeader(CreateBudgetHeaderRequest request)
         {
             UserOrganization? userOrganization = await _mediator.Send(new GetCurrentOrganizationQuery());
 
@@ -73,7 +74,7 @@ namespace Server.Controllers
 
             if (affectedRows == 1)
             {
-                return Ok();
+                return Created("", null);
             }
 
             return BadRequest();

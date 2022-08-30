@@ -10,7 +10,7 @@ namespace Server.Mapping
     {
         public BudgetHeaderMappingProfile()
         {
-            CreateMap<BudgetHeaderRequest, BudgetHeader>();
+            CreateMap<CreateBudgetHeaderRequest, BudgetHeader>();
 
             CreateMap<BudgetHeader, BudgetHeaderResponse>();
         }
