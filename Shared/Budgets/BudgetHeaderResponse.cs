@@ -1,6 +1,6 @@
 using Shared.Common;
 
-namespace Shared.BudgetHeaders
+namespace Shared.Budgets
 {
     public class BudgetHeaderResponse : OrganizationDependentResponse
     {

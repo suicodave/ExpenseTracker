@@ -1,4 +1,4 @@
-namespace Shared.BudgetHeaders
+namespace Shared.Budgets
 {
     public class CreateBudgetHeaderRequest
     {

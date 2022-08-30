@@ -12,7 +12,7 @@ using Server.Data.Extensions;
 using Server.Organizations.Queries;
 using Server.Users;
 
-using Shared.BudgetHeaders;
+using Shared.Budgets;
 
 namespace Server.Controllers
 {

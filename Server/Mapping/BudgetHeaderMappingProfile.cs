@@ -2,7 +2,7 @@ using AutoMapper;
 
 using Server.Budgets;
 
-using Shared.BudgetHeaders;
+using Shared.Budgets;
 
 namespace Server.Mapping
 {
