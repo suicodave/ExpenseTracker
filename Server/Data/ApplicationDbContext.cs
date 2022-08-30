@@ -38,6 +38,8 @@ namespace Server.Data
 
         public DbSet<BudgetTemplate> BudgetTemplates { get; set; }
 
+        public DbSet<BudgetHeader> BudgetHeaders { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
