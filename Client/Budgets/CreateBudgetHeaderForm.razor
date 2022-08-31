@@ -1,5 +1,6 @@
 @using System.Net
 @inject HttpClient _http
+@inject ILogger<CreateBudgetHeaderForm> _logger
 
 <EditForm Model="@_request"
     OnValidSubmit="HandleSubmit">
@@ -21,6 +22,31 @@
                 Variant="Variant.Outlined"
                 DisableToolbar="true"
                 For="(()=> _request.CoveredTo)" />
+
+            <br>
+
+            <MudText Typo="Typo.h5">Accounts</MudText>
+
+            <br>
+
+            @{
+                int index = 0;
+            }
+
+            @foreach (var item in _request.BudgetAccounts)
+            {
+                <MudTextField @bind-Value="item.Amount"
+                Variant="Variant.Outlined"
+                Label="@_budgetTemplates[index].AccountType.Name"
+                Class="mb-4"
+                Adornment="Adornment.End"
+                AdornmentIcon="@Icons.Material.Filled.Delete"
+                OnAdornmentClick="@(()=>RemoveAccount(item))"
+                AdornmentColor="Color.Error" />
+
+                index++;
+            }
+
         </DialogContent>
         <DialogActions>
             <MudButton OnClick="Cancel">Cancel</MudButton>
@@ -42,9 +68,16 @@
 
     private bool _isLoading { get; set; } = false;
 
+    private IList<BudgetTemplateResponse> _budgetTemplates { get; set; } = new List<BudgetTemplateResponse>();
+
     private void Cancel() => _dialogInstance.Cancel();
 
     public DateTime date { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetBudgetTemplates();
+    }
 
 
     private async Task HandleSubmit()
@@ -55,7 +88,6 @@
 
         if (response.StatusCode == HttpStatusCode.Created)
         {
-
             _dialogInstance.Close(DialogResult.Ok(1));
 
             _isLoading = false;
@@ -64,5 +96,23 @@
         }
 
         _isLoading = false;
+    }
+
+    private async Task GetBudgetTemplates()
+    {
+        _budgetTemplates = await _http.GetFromJsonAsync<IList<BudgetTemplateResponse>>("BudgetTemplates/Active") ??
+        new List<BudgetTemplateResponse>();
+
+        _request.BudgetAccounts = _budgetTemplates.Select(x => new BudgetAccountRequest
+        {
+            AccountTypeId = x.AccountTypeId,
+            Amount = x.Amount
+        }).ToList();
+
+    }
+
+    private void RemoveAccount(BudgetAccountRequest request)
+    {
+        _request.BudgetAccounts.Remove(request);
     }
 }
