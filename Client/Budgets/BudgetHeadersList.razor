@@ -7,14 +7,12 @@
 
     <MudSpacer></MudSpacer>
 
-    @if (_list is not null)
-    {
-        <CreateButton TForm="CreateBudgetHeaderForm"
+    <CreateButton TForm="CreateBudgetHeaderForm"
         Title="Create a Budget"
-        OnCreated="_list.GetData">
-            Create
-        </CreateButton>
-    }
+        OnCreated="@(async ()=> await _list.GetData())">
+        Create
+    </CreateButton>
+
 </div>
 
 <OrganizationDependentList TEntity="BudgetHeaderResponse"
