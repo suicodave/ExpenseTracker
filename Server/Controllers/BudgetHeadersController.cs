@@ -72,7 +72,7 @@ namespace Server.Controllers
 
             int affectedRows = await _context.SaveChangesAsync();
 
-            if (affectedRows == 1)
+            if (affectedRows > 1)
             {
                 return Created("", null);
             }

@@ -13,6 +13,8 @@ namespace Server.Mapping
             CreateMap<CreateBudgetHeaderRequest, BudgetHeader>();
 
             CreateMap<BudgetHeader, BudgetHeaderResponse>();
+
+            CreateMap<BudgetAccountRequest, BudgetAccount>();
         }
     }
 }

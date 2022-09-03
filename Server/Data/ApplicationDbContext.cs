@@ -40,6 +40,8 @@ namespace Server.Data
 
         public DbSet<BudgetHeader> BudgetHeaders { get; set; }
 
+        public DbSet<BudgetAccount> BudgetAccounts { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
