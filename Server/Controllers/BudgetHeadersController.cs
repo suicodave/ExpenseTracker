@@ -46,6 +46,7 @@ namespace Server.Controllers
             }
 
             IEnumerable<BudgetHeaderResponse> budgetHeaders = await _context.BudgetHeaders
+            .Include(x => x.BudgetAccounts)
             .FilterByOrganization(userOrganization)
             .OrderByDescending(x => x.Id)
             .ProjectTo<BudgetHeaderResponse>(_mapper.ConfigurationProvider)

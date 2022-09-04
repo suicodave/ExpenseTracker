@@ -12,9 +12,12 @@ namespace Server.Mapping
         {
             CreateMap<CreateBudgetHeaderRequest, BudgetHeader>();
 
-            CreateMap<BudgetHeader, BudgetHeaderResponse>();
+            CreateMap<BudgetHeader, BudgetHeaderResponse>()
+            .ForMember(dest => dest.TotalBudget, options => options.MapFrom(x => x.BudgetAccounts.Sum(x => x.Amount)));
 
             CreateMap<BudgetAccountRequest, BudgetAccount>();
+
+            CreateMap<BudgetAccount, BudgetAccountResponse>();
         }
     }
 }
