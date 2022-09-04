@@ -42,6 +42,8 @@ namespace Server.Data
 
         public DbSet<BudgetAccount> BudgetAccounts { get; set; }
 
+        public DbSet<BudgetTotalExpensesAndBudget> BudgetTotalExpensesAndBudget { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

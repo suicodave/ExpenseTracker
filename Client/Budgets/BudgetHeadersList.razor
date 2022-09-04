@@ -19,17 +19,7 @@
     ListApiPath="BudgetHeaders"
     @ref="_list">
     <ListItem>
-        <MudPaper Class="my-2 pa-6 rounded-lg d-flex justify-space-between align-center">
-            <MudText Typo="Typo.body1">
-                @context.CoveredFrom.ToShortDateString() - @context.CoveredTo.ToShortDateString()
-            </MudText>
-
-            <div class="d-flex justify-space-between align-center">
-                <MudText Typo="Typo.h5" Class="mud-success-text">
-                    @context.TotalBudget.ToString("#,###.##")
-                </MudText>
-            </div>
-        </MudPaper>
+        <BudgetHeaderListItem BudgetHeader="@context" />
     </ListItem>
 </OrganizationDependentList>
 

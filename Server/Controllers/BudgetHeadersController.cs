@@ -45,12 +45,22 @@ namespace Server.Controllers
                 return NotFound();
             }
 
-            IEnumerable<BudgetHeaderResponse> budgetHeaders = await _context.BudgetHeaders
-            .Include(x => x.BudgetAccounts)
-            .FilterByOrganization(userOrganization)
-            .OrderByDescending(x => x.Id)
-            .ProjectTo<BudgetHeaderResponse>(_mapper.ConfigurationProvider)
+            IEnumerable<BudgetTotalExpensesAndBudget> budgetHeadersExpensesAndBudget = await _context.BudgetTotalExpensesAndBudget
+            .FromSqlRaw(@"select 
+            a.Id,
+            a.CoveredFrom,
+            a.CoveredTo,
+
+            (select isnull(sum(b.amount),0) from Expenses b where b.EffectiveDate between a.CoveredFrom and a.CoveredTo and b.OrganizationId = a.OrganizationId and Status='Completed' ) TotalExpenses,
+            (select sum(b.amount) from BudgetAccounts b where b.BudgetHeaderId = a.Id ) TotalBudget
+
+            from BudgetHeaders a
+
+            order by a.CoveredFrom desc, a.CoveredTo desc
+            ")
             .ToListAsync();
+
+            var budgetHeaders = _mapper.Map<IEnumerable<BudgetHeaderResponse>>(budgetHeadersExpensesAndBudget);
 
             return Ok(budgetHeaders);
         }
