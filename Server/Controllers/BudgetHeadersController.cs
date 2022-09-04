@@ -50,14 +50,15 @@ namespace Server.Controllers
             a.Id,
             a.CoveredFrom,
             a.CoveredTo,
+            a.OrganizationId,
 
             (select isnull(sum(b.amount),0) from Expenses b where b.EffectiveDate between a.CoveredFrom and a.CoveredTo and b.OrganizationId = a.OrganizationId and Status='Completed' ) TotalExpenses,
             (select sum(b.amount) from BudgetAccounts b where b.BudgetHeaderId = a.Id ) TotalBudget
 
-            from BudgetHeaders a
-
-            order by a.CoveredFrom desc, a.CoveredTo desc
-            ")
+            from BudgetHeaders a")
+            .FilterByOrganization(userOrganization)
+            .OrderByDescending(x => x.CoveredFrom)
+            .ThenByDescending(x => x.CoveredTo)
             .ToListAsync();
 
             var budgetHeaders = _mapper.Map<IEnumerable<BudgetHeaderResponse>>(budgetHeadersExpensesAndBudget);
