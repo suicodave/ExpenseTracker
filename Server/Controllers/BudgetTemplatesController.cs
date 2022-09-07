@@ -128,6 +128,7 @@ namespace Server.Controllers
             }
 
             return Ok(await _context.BudgetTemplates
+            .FilterByOrganization(currentUserOrg)
             .Include(x => x.AccountType)
             .Where(x => x.IsActive)
             .OrderBy(x => x.AccountType.Name)
