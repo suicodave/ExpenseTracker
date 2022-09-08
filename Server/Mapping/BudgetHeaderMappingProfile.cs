@@ -26,6 +26,12 @@ namespace Server.Mapping
 
                 destination.ExpensePercent = Math.Round((destination.TotalExpenses / destination.TotalBudget) * 100, 2);
             });
+
+            CreateMap<BudgetAccountWithExpense, BudgetAccountWithExpenseResponse>()
+            .AfterMap((source, destination) =>
+            {
+                destination.Percent = Math.Round((destination.TotalExpenses / destination.Budget) * 100, 2);
+            });
         }
     }
 }

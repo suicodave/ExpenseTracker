@@ -66,6 +66,84 @@ namespace Server.Controllers
             return Ok(budgetHeaders);
         }
 
+        [HttpGet("{budgetHeaderId}/Accounts")]
+        public async Task<ActionResult<IEnumerable<BudgetAccountWithExpenseResponse>>> GetBudgetAccountsWithExpense(int budgetHeaderId)
+        {
+            var budgetAccountsWithExpense = await _context.BudgetAccountsWithExpense.FromSqlRaw(@"
+            with CompletedExpenseAccounts as (
+            select 
+
+            ea.AccountTypeId, 
+            ea.Amount ExpenseAmount,
+            e.OrganizationId,
+            e.Status,
+            e.Id ExpenseId,
+            e.EffectiveDate
+
+
+            from ExpenseAccounts ea
+
+            inner join expenses e on ea.ExpenseId = e.Id
+
+            where e.Status = 'Completed'
+            ),
+
+            ScopedBudgetAccounts as 
+            (
+                select 
+
+                ba.AccountTypeId,
+                ba.Amount as BudgetAmount,
+                ba.BudgetHeaderId,
+                bh.OrganizationId,
+                bh.CoveredFrom,
+                bh.CoveredTo
+                
+                from BudgetAccounts ba
+
+                inner join BudgetHeaders bh on ba.BudgetHeaderId = bh.Id
+                
+                
+            ),
+
+            AccountGroupedExpenses as (
+
+            select  
+            cea.AccountTypeId,
+            sum(cea.ExpenseAmount) ExpenseAmount,
+            cea.OrganizationId,
+            cea.EffectiveDate
+
+            from CompletedExpenseAccounts cea
+            group by cea.AccountTypeId,OrganizationId,EffectiveDate
+
+            )
+
+
+            select 
+            (select top 1 at.Name from AccountTypes at where age.AccountTypeId = at.Id) AccountTypeName,
+            sba.BudgetAmount Budget,
+            sum(age.ExpenseAmount) TotalExpenses
+
+            from AccountGroupedExpenses age
+
+            inner join ScopedBudgetAccounts sba on age.AccountTypeId = sba.AccountTypeId
+
+            where age.EffectiveDate between sba.CoveredFrom and sba.CoveredTo
+
+            and age.OrganizationId = sba.OrganizationId
+
+            and sba.BudgetHeaderId = {0}
+
+            group by age.AccountTypeId,sba.BudgetAmount
+            order by AccountTypeName", budgetHeaderId)
+            .ToListAsync();
+
+            var response = _mapper.Map<IEnumerable<BudgetAccountWithExpenseResponse>>(budgetAccountsWithExpense);
+
+            return Ok(response);
+        }
+
         [HttpPost]
         public async Task<ActionResult> CreateBudgetHeader(CreateBudgetHeaderRequest request)
         {
