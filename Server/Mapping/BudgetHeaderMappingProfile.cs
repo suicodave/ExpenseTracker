@@ -20,17 +20,22 @@ namespace Server.Mapping
 
 
             CreateMap<BudgetTotalExpensesAndBudget, BudgetHeaderResponse>()
+            .ForMember(dest => dest.Budget, options => options.MapFrom(source => source.TotalBudget))
+            .ForMember(dest => dest.Expenses, options => options.MapFrom(source => source.TotalExpenses))
             .AfterMap((source, destination) =>
             {
-                destination.RemainingBalance = destination.TotalBudget - destination.TotalExpenses;
+                destination.Balance = destination.Budget - destination.Expenses;
 
-                destination.ExpensePercent = Math.Round((destination.TotalExpenses / destination.TotalBudget) * 100, 2);
+                destination.Percent = Math.Round((destination.Expenses / destination.Budget) * 100, 2);
             });
 
             CreateMap<BudgetAccountWithExpense, BudgetAccountWithExpenseResponse>()
+            .ForMember(dest => dest.Expenses, options => options.MapFrom(source => source.TotalExpenses))
             .AfterMap((source, destination) =>
             {
-                destination.Percent = Math.Round((destination.TotalExpenses / destination.Budget) * 100, 2);
+                destination.Percent = Math.Round((destination.Expenses / destination.Budget) * 100, 2);
+
+                destination.Balance = destination.Budget - destination.Expenses;
             });
         }
     }

@@ -1,0 +1,65 @@
+@page "/Budgets/{budgetHeaderId:int}"
+@inject HttpClient _http
+
+
+@attribute [Authorize]
+
+<PageTitle>Budget @BudgetHeaderId</PageTitle>
+
+<AuthorizedLayout>
+    <MudContainer MaxWidth="MaxWidth.Small"
+        Class="mt-4">
+        @if (_budgetHeader is not null)
+        {
+            <MudText Typo="Typo.h5"
+            Class="mb-4"> @_budgetHeader.CoveredFrom.ToShortDateString() -
+                @_budgetHeader.CoveredTo.ToShortDateString()</MudText>
+
+            <BudgetFiguresGrid BudgetWithExpense="_budgetHeader" />
+        }
+
+        @if (_accounts.Any())
+        {
+            <MudText Typo="Typo.h6"
+            Class="my-4">
+                Accounts
+            </MudText>
+
+
+            @foreach (var account in _accounts)
+            {
+                <MudPaper class="pa-4 mb-4">
+                    <MudText Typo="Typo.h5" Class="mb-4">
+                        @account.AccountTypeName
+                    </MudText>
+
+                    <BudgetFiguresGrid BudgetWithExpense="account" />
+                </MudPaper>
+            }
+
+
+        }
+
+    </MudContainer>
+</AuthorizedLayout>
+
+@code {
+    [Parameter]
+    public int BudgetHeaderId { get; set; }
+
+    private BudgetHeaderResponse? _budgetHeader = default;
+
+    public IEnumerable<BudgetAccountWithExpenseResponse> _accounts = Enumerable.Empty<BudgetAccountWithExpenseResponse>();
+
+    public string _apiPath => $"BudgetHeaders/{BudgetHeaderId}";
+
+    public string _budgetAccountsApiPath => $"{_apiPath}/Accounts";
+
+    protected override async Task OnInitializedAsync()
+    {
+        _budgetHeader = await _http.GetFromJsonAsync<BudgetHeaderResponse>(_apiPath);
+
+        _accounts = await _http.GetFromJsonAsync<IEnumerable<BudgetAccountWithExpenseResponse>>(_budgetAccountsApiPath) ??
+        Enumerable.Empty<BudgetAccountWithExpenseResponse>();
+    }
+}

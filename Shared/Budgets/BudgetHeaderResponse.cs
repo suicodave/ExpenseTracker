@@ -4,7 +4,7 @@ using Shared.Common;
 
 namespace Shared.Budgets
 {
-    public class BudgetHeaderResponse
+    public class BudgetHeaderResponse : IBudgetWithExpenseResponse
     {
         public int Id { get; set; }
 
@@ -12,13 +12,12 @@ namespace Shared.Budgets
 
         public DateTime CoveredTo { get; set; }
 
-        public decimal TotalBudget { get; set; }
+        public decimal Budget { get; set; }
 
-        public decimal TotalExpenses { get; set; }
+        public decimal Expenses { get; set; }
 
-        public decimal ExpensePercent { get; set; }
+        public decimal Percent { get; set; }
 
-        public decimal RemainingBalance { get; set; }
-
+        public decimal Balance { get; set; }
     }
 }

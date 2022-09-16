@@ -1,0 +1,86 @@
+<MudGrid>
+    <MudItem xs="3">
+        <div class="d-flex align-center justify-center flex-column grey lighten-3 p-3 rounded">
+            <MudText Typo="Typo.h6"
+                Class="mud-success-text">
+                @BudgetWithExpense.Budget.ToString("#,##0.##")
+            </MudText>
+            <MudText Typo="Typo.subtitle1"
+                Class="grey-text darken-4">
+                Budget
+            </MudText>
+        </div>
+
+    </MudItem>
+
+    <MudItem xs="3">
+        <div class="d-flex align-center justify-center flex-column grey lighten-3 p-3 rounded">
+            <MudText Typo="Typo.h6"
+                Class="mud-error-text">
+                @BudgetWithExpense.Expenses.ToString("#,##0.##")
+            </MudText>
+            <MudText Typo="Typo.subtitle1"
+                Class="grey-text darken-4">
+                Spent
+            </MudText>
+        </div>
+    </MudItem>
+
+    <MudItem xs="3">
+        <div class="d-flex align-center justify-center flex-column grey lighten-3 p-3 rounded">
+            <MudText Typo="Typo.h6"
+                Class="@_financialColor">
+                @BudgetWithExpense.Balance.ToString("#,##0.##")
+            </MudText>
+            <MudText Typo="Typo.subtitle1"
+                Class="grey-text darken-4">
+                Balance
+            </MudText>
+        </div>
+    </MudItem>
+
+    <MudItem xs="3">
+        <div class="d-flex align-center justify-center flex-column grey lighten-3 p-3 rounded">
+            <MudText Typo="Typo.h6"
+                Class="@_financialColor">
+                @BudgetWithExpense.Percent.ToString("#,##0.##")%
+            </MudText>
+            <MudText Typo="Typo.subtitle1"
+                Class="grey-text darken-4">
+                Usage
+            </MudText>
+        </div>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [Parameter]
+    public IBudgetWithExpenseResponse BudgetWithExpense { get; set; } = default!;
+
+    private string _financialColor
+    {
+        get
+        {
+            string color = string.Empty;
+
+            decimal percent = BudgetWithExpense.Percent;
+
+            switch (percent)
+            {
+                case decimal n when n > 79:
+                    color = "mud-error-text";
+                    break;
+
+                case decimal n when n > 49:
+                    color = "mud-warning-text";
+                    break;
+
+                default:
+                    color = "mud-success-text";
+                    break;
+            }
+
+            return color;
+        }
+    }
+}
