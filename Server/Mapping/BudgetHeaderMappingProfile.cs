@@ -18,7 +18,6 @@ namespace Server.Mapping
 
             CreateMap<BudgetAccount, BudgetAccountResponse>();
 
-
             CreateMap<BudgetTotalExpensesAndBudget, BudgetHeaderResponse>()
             .ForMember(dest => dest.Budget, options => options.MapFrom(source => source.TotalBudget))
             .ForMember(dest => dest.Expenses, options => options.MapFrom(source => source.TotalExpenses))
@@ -37,6 +36,8 @@ namespace Server.Mapping
 
                 destination.Balance = destination.Budget - destination.Expenses;
             });
+
+            CreateMap<BudgetUntrackedAccount, BudgetUntrackedAccountResponse>();
         }
     }
 }

@@ -42,6 +42,8 @@ namespace Server.Data
 
         public DbSet<BudgetAccount> BudgetAccounts { get; set; }
 
+        public DbSet<BudgetUntrackedAccount> BudgetUntrackedAccounts { get; set; }
+
         public DbSet<BudgetTotalExpensesAndBudget> BudgetTotalExpensesAndBudget { get; set; }
 
         public DbSet<BudgetAccountWithExpense> BudgetAccountsWithExpense { get; set; }

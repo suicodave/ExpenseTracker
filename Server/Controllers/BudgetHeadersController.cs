@@ -169,6 +169,91 @@ namespace Server.Controllers
             return Ok(response);
         }
 
+        [HttpGet("{budgetHeaderId}/Accounts/Untracked")]
+        public async Task<ActionResult<IEnumerable<BudgetUntrackedAccountResponse>>> GetUntrackedAccounts(int budgetHeaderId)
+        {
+
+            var budgetUntrackedAccounts = await _context.BudgetUntrackedAccounts.FromSqlRaw(@"
+            with CompletedExpenseAccounts as (
+            select 
+
+            ea.AccountTypeId, 
+            ea.Amount ExpenseAmount,
+            e.OrganizationId,
+            e.Status,
+            e.Id ExpenseId,
+            e.EffectiveDate
+
+
+            from ExpenseAccounts ea
+
+            inner join expenses e on ea.ExpenseId = e.Id
+
+            where e.Status = 'Completed'
+            ),
+
+            ScopedBudgetAccounts as 
+            (
+                select 
+
+                ba.AccountTypeId,
+                ba.Amount as BudgetAmount,
+                ba.BudgetHeaderId,
+                bh.OrganizationId,
+                bh.CoveredFrom,
+                bh.CoveredTo
+                
+                from BudgetAccounts ba
+
+                inner join BudgetHeaders bh on ba.BudgetHeaderId = bh.Id
+            ),
+
+            AccountGroupedExpenses as (
+
+            select  
+            cea.AccountTypeId,
+            sum(cea.ExpenseAmount) ExpenseAmount,
+            cea.OrganizationId,
+            cea.EffectiveDate
+
+            from CompletedExpenseAccounts cea
+            group by cea.AccountTypeId,OrganizationId,EffectiveDate
+
+            )
+
+			select  
+			
+			(select at.Name from AccountTypes at where age.AccountTypeId = at.Id) AccountTypeName,
+			sum(age.ExpenseAmount) Expense
+			
+			from AccountGroupedExpenses age where exists(
+			
+			select 1 from ScopedBudgetAccounts sba where age.EffectiveDate between sba.CoveredFrom and sba.CoveredTo
+
+			and sba.BudgetHeaderId = {0}
+
+			and age.OrganizationId = sba.OrganizationId
+			)
+
+			and not exists(
+			
+			select 1 from ScopedBudgetAccounts sba where sba.BudgetHeaderId = {0}
+			
+			and age.AccountTypeId = sba.AccountTypeId
+			
+			)
+
+			group by age.AccountTypeId", budgetHeaderId)
+            .ToListAsync();
+
+
+            var response = _mapper.Map<IEnumerable<BudgetUntrackedAccountResponse>>(budgetUntrackedAccounts);
+
+
+            return Ok(response);
+        }
+
+
         [HttpPost]
         public async Task<ActionResult> CreateBudgetHeader(CreateBudgetHeaderRequest request)
         {
